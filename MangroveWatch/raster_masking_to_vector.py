@@ -38,6 +38,7 @@ def mask_raster_to_vector(year_list, bbox)
         out_meta=src.meta.copy() # copy metadata from the original raster data
 
     # updating meta data
+    # source: https://rasterio.readthedocs.io/en/latest/topics/masking-by-shapefile.html
     out_meta.update({
         "driver":"Gtiff",
         "height":out_image.shape[1], #this needs to be checked once running with actual data!  
