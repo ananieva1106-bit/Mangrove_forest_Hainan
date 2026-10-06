@@ -18,11 +18,12 @@ import geopandas as gpd
 
 # define function to create a mask of raster to the vector data, using rasterio
 
-def mask_raster_to_vector(year, bbox)
+def mask_raster_to_vector(year_list, bbox)
     """ 
     Function that masks raster data to a shapefile. The function takes a year of interest as input as well as a bbox to define the area of interest.  
     """
     # specifying the directories for data, that contain the year of interest
+    input_shps = [f'data/mangroves_china/mangrove{year}.shp' for year in year_list]
     input_shp = f"data/vector/mangrove{year}.shp"
     input_raster = f"data/raster/{year}.tif" # needs to be adapted to actual path name still. 
     output_raster = f"data/raster/landsat_mask{year}.tif"
@@ -49,12 +50,3 @@ def mask_raster_to_vector(year, bbox)
         dst.write(out_raster)
 
 
-# clip it to the vector extent (inverse)
-
-
-with rasterio.open("tests/data/RGB.byte.tif") as src:
-    out_image, out_transform = rasterio.mask.mask(src, shapes, crop=True, inverse=True)
-    out_meta = src.meta
-# and store it to 
-
-# copying the metadata from raster data 
