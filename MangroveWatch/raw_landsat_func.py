@@ -38,7 +38,7 @@ def search_landsat_scenes(years, bbox, max_cloud=40):
     return selected_items
 
 
-def load_raw_landsat(selected_items, bbox, bands, output_dir="landsat_data"):
+def load_raw_landsat(selected_items, bbox, bands, output_dir="data/landsat_data"):
     """Load raw (unscaled) Landsat band data and save each band/year as a GeoTIFF."""
     if not os.path.exists(output_dir):
         os.makedirs(output_dir, exist_ok=True)
