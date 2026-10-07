@@ -3,13 +3,13 @@
 # Group Project by Roxane Marguerat, Elmo van den Beld, Aleksandra Ananieva, Lea Ehrensperger
 # Group proect challenge n.9
 
-# Source: https://planetarycomputer.microsoft.com/docs/quickstarts/reading-stac
 import os
 import pystac_client
 import planetary_computer
 import odc.stac
 import rioxarray
 
+# Source: https://planetarycomputer.microsoft.com/docs/quickstarts/reading-stac
 def search_landsat_scenes(years, bbox, max_cloud=40):
     """Search the STAC catalog and return valid scenes per year."""
     catalog = pystac_client.Client.open(
@@ -38,6 +38,7 @@ def search_landsat_scenes(years, bbox, max_cloud=40):
     return selected_items
 
 
+# Source: https://odc-stac.readthedocs.io/en/latest/ 
 def load_raw_landsat(selected_items, bbox, bands, output_dir="landsat_data"):
     """Load raw (unscaled) Landsat band data and save each band/year as a GeoTIFF."""
     if not os.path.exists(output_dir):
@@ -61,6 +62,7 @@ def load_raw_landsat(selected_items, bbox, bands, output_dir="landsat_data"):
         raw_data[year] = data
 
         # Save each band as its own GeoTIFF (one file per date, per band)
+        # Source: https://corteva.github.io/rioxarray/html/rioxarray.html
         for band in bands:
             for i, t in enumerate(data.time.values):
                 out_path = os.path.join(output_dir, f"{band}_{year}_{i}.tif")
