@@ -20,8 +20,10 @@ def fragm_index(mangrove_extent):
     :param vector layer of magrove extent
     """
     for feature in mangrove_extent:
+        # source: https://gis.stackexchange.com/questions/122957/how-to-calculate-the-perimeter-of-the-polygon-using-python-programming
         length = feature.geometry().length() # perimeter of the polygon
         area = feature.geometry().area() # area of the polygon
         feature.ratio = length/area # edge-to-area ratio
+    # source: https://stackoverflow.com/questions/31037298/pandas-get-column-average-mean    
     mean_ratio = mangrove_extent.ratio.mean() # average of the ratio for all polygons
     return mean_ratio
