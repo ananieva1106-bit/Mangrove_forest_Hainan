@@ -2,6 +2,7 @@ def calc_NDVI(NIR, Red):
     """
     Calculate the NDVI, normalized difference vegetation index
     :param NIR = near infrared band, Red = red band
+    source: Exercise 6 Geoscripting course
     """
     NDVI = (NIR - Red)/(NIR - Red)
     return NDVI
@@ -10,6 +11,7 @@ def calc_NDMI(NIR, SWIR):
     """
     Calculate the NDMI, normalized difference moisture index
     :param NIR = near infrared band, SWIR = short-wave infrared band
+    source: Exercise 6 Geoscripting course
     """
     NDMI = (NIR - SWIR)/(NIR + SWIR)
     return NDMI
