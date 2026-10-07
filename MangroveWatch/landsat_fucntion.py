@@ -64,13 +64,12 @@ def plot_true_color(selected_items, bbox, output_dir="landsat_data"):
             groupby="solar_day",
         )
 
-        # Mask true nodata (raw DN = 0) BEFORE scaling, so it becomes NaN
-        # instead of being silently clipped into a fake "0.0" reflectance value
+        # Mask true nodata 
         data = data.where(data > 0)
 
         data_scaled = scale_landsat_sr(data)
 
-        # Median composite along time dimension (ignoring NaN nodata values)
+        # Median composite along time dimension
         composite = data_scaled.median(dim="time", skipna=True)
 
         # Natural colour composite
@@ -108,8 +107,7 @@ def plot_ndvi_ndwi(selected_items, bbox, output_dir="landsat_data"):
             groupby="solar_day",
         )
 
-        # Mask true nodata (raw DN = 0) BEFORE scaling, so it becomes NaN
-        # instead of being silently clipped into a fake "0.0" reflectance value
+        # Mask true nodata
         data = data.where(data > 0)
 
         data_scaled = scale_landsat_sr(data)
