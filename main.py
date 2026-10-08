@@ -7,6 +7,7 @@ import pandas as pd
 from MangroveWatch import index_calculation
 from MangroveWatch import time_slider_maps
 from MangroveWatch import landsat_function
+from MangroveWatch import raster_masking_to_vector
 
 # Creation of directories
 # source : exercice 10 solution
@@ -35,6 +36,10 @@ n_scenes =
 
 for year in years:
     landsat_function.landsat_download(year, bbox, bands, crs, output_dir, n_scenes)
+
+    # mask the raster to the extent of the mangrove
+    raster_masking_to_vector.mask_raster_to_vector(year, bbox)
+    raster_masking_to_vector.extent_raster(year)
 
 
 ### CALCULATION OF THE INDEXES ###
