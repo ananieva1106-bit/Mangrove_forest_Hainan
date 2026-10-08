@@ -20,6 +20,7 @@ rioxarray = ">=0.23.0,<0.24"
 matplotlib = ">=3.11.2,<4"
 odc-stac = ">=0.5.3,<0.6"
 stackstac = ">=0.5.0,<0.6"
+leafmap = ">=0.63.1,<0.64"
 
 [pypi-dependencies]
 pillow = ">=11"
