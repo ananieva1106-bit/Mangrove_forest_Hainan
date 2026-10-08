@@ -16,6 +16,7 @@ def time_slider_raster(years, paths):
 
     # creating a map with raster images and adding timeslider element for the five selected years
     map = leafmap.Map(projection="globe", sidebar_visible=True, layer_manager_expanded=False)
+    map.add_basemap("OpensStreetMap")
     map.add_time_slider(
         paths, #images 
         labels=years,
