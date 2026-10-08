@@ -7,14 +7,6 @@ import rasterio
 from scipy.ndimage import maximum_filter
 from collections import defaultdict
 
-# default variables
-# year = [1990]
-# bbox = [108.506470, 18.151072, 111.088257, 20.190035]
-# bands = ["red", "nir08", "swir16"]
-# crs = "EPSG:32649"
-# output_dir = "data/landsat_data"
-# n_scenes = 3
-
 # Start function here
 def landsat_download(year,bbox, bands, crs, output_dir, n_scenes):
     catalog = pystac_client.Client.open(
@@ -67,10 +59,6 @@ def landsat_download(year,bbox, bands, crs, output_dir, n_scenes):
         "height": arr.shape[1],
         "width": arr.shape[2],
     }
-    
-        # NaN -> 0, stored as uint16 with 0 as nodata
-    arr = np.nan_to_num(np.rint(arr), nan=0).astype("uint16")
-    profile.update(dtype="uint16", nodata=0, compress="deflate")
     
     # Write file
     with rasterio.open(f"{output_dir}/{year}.tif", "w", **profile) as dst:
