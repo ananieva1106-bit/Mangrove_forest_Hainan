@@ -38,10 +38,10 @@ output_dir = "data/landsat_data"
 n_scenes = 3
 
 for year in years:
-    landsat_download.landsat_download(year, bbox, bands, crs, output_dir, n_scenes)
+    #landsat_download.landsat_download(year, bbox, bands, crs, output_dir, n_scenes)
 
     # mask the raster to the extent of the mangrove
-   # raster_masking_to_vector.mask_raster_to_vector(year, bbox)
+    raster_masking_to_vector.mask_raster_to_vector(year, bbox)
     #raster_masking_to_vector.extent_raster(year)
 
 

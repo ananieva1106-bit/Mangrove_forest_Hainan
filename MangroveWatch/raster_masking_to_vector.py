@@ -11,7 +11,7 @@
 
 # Importing the packages neeed for the function
 import rasterio
-from rasterio import mask
+from rasterio.mask import mask
 import geopandas as gpd
 import numpy as np
 
@@ -32,9 +32,9 @@ def mask_raster_to_vector(year, bbox):
 
 
     with rasterio.open(input_raster_fp) as src:
-        mangrove_shp=mangrove_shp.to_crs(src.crs) # bringing vector and raster data into same projection 
-        out_image, out_transform=mask(src,mangrove_shp.geometry,crop=True) # source : tutorial 11
-        out_meta=src.meta.copy() # copy metadata from the original raster data
+        mangrove_shp = mangrove_shp.to_crs(src.crs) # bringing vector and raster data into same projection 
+        out_image, out_transform = mask(src,mangrove_shp.geometry,crop = True) # source : tutorial 11
+        out_meta = src.meta.copy() # copy metadata from the original raster data
 
     # updating meta data
     # source: https://rasterio.readthedocs.io/en/latest/topics/masking-by-shapefile.html
