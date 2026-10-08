@@ -70,6 +70,7 @@ def landsat_download(year,bbox, bands, crs, output_dir, n_scenes):
     
         # NaN -> 0, stored as uint16 with 0 as nodata
     arr = np.nan_to_num(np.rint(arr), nan=0).astype("uint16")
+    profile.update(dtype="uint16", nodata=0, compress="deflate")
     
     # Write file
     with rasterio.open(f"{output_dir}/{year}.tif", "w", **profile) as dst:
