@@ -8,12 +8,12 @@ from scipy.ndimage import maximum_filter
 from collections import defaultdict
 
 # default variables
-year = [1990]
-bbox = [108.506470, 18.151072, 111.088257, 20.190035]
-bands = ["red", "nir08", "swir16"]
-crs = "EPSG:32649"
-output_dir = "data/landsat_data"
-n_scenes = 3
+# year = [1990]
+# bbox = [108.506470, 18.151072, 111.088257, 20.190035]
+# bands = ["red", "nir08", "swir16"]
+# crs = "EPSG:32649"
+# output_dir = "data/landsat_data"
+# n_scenes = 3
 
 # Start function here
 def landsat_download(year,bbox, bands, crs, output_dir, n_scenes):
