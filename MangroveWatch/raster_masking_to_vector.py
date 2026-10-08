@@ -13,29 +13,28 @@
 import rasterio
 from rasterio import mask
 import geopandas as gpd
+import numpy as np
 
 # handling non data needed? 
 
 # define function to create a mask of raster to the vector data, using rasterio
 
-def mask_raster_to_vector(year_list, bbox):
+def mask_raster_to_vector(year, bbox):
     """ 
     Function that masks raster data to a shapefile. The function takes a year of interest as input as well as a bbox to define the area of interest.  
     """
     # Load in vectors as GPD
-    for year in year_list:
-        # specifying the directories for data, that contain the year of interest
-        mangrove_shp_gpds = {year: gpd.read_file(f'data/vector/mangrove{year}.shp', bbox=bbox)}
-        input_rasters_fp = [f'data/raster/rastername{year}.tif'] # Add actual path name
-        output_rasters_fp = [f"data/raster/landsat_mask{year}.tif"]
+    mangrove_shp = gpd.read_file(f'data/vector/mangrove{year}.shp', bbox=bbox)
+
+    # Specifying the file path for the rasters
+    input_raster_fp = f'data/landsat_data/{year}.tif'
+    output_raster_fp = f"data/landsat_data/mask_{year}.tif"
 
 
-    # open the raster data and masking it to vector geometry
-    for raster in input_rasters_fp:
-        with rasterio.open(raster) as src:
-            mangrove_shp=mangrove_shp.to_crs(src.crs) # bringing vector and raster data into same projection 
-            out_image, out_transform=mask(src,mangrove_shp_gpds.geometry,crop=True)
-            out_meta=src.meta.copy() # copy metadata from the original raster data
+    with rasterio.open(input_raster_fp) as src:
+        mangrove_shp=mangrove_shp.to_crs(src.crs) # bringing vector and raster data into same projection 
+        out_image, out_transform=mask(src,mangrove_shp.geometry,crop=True) # source : tutorial 11
+        out_meta=src.meta.copy() # copy metadata from the original raster data
 
     # updating meta data
     # source: https://rasterio.readthedocs.io/en/latest/topics/masking-by-shapefile.html
@@ -47,9 +46,26 @@ def mask_raster_to_vector(year_list, bbox):
     })
 
     # open a new raster file and write the masked data to it          
-    with rasterio.open(output_rasters_fp,'w',**out_meta) as dst:
+    with rasterio.open(output_raster_fp,'w',**out_meta) as dst:
         dst.write(out_image)
+
+def extent_raster(year):
+
+    # Specifyfing file path for the raster
+    input_raster_fp = f"data/landsat_data/mask_{year}.tif"
+    output_raster_fp = f"data/extent_{year}.tif"
+
+    with rasterio.open(input_raster_fp) as src:
+        array = src.read(1)
     
+    # Copying the raster and atributing value 1 to pixel withint the mangrove extent
+    extent_array = np.zeros_like(array[1], dtype=np.int32)
+    extent_array[array != 0] = 1
+
+    out_meta = input_raster_fp.meta.copy() # copying the meta data
+
+    with rasterio.open(output_raster_fp,'w',**out_meta) as dst: # writing the tif file of the extent
+        dst.write(extent_array)
 
 
 
