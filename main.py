@@ -6,7 +6,7 @@ import pandas as pd
 # Importing the functions
 from MangroveWatch import index_calculation
 from MangroveWatch import time_slider_maps
-from MangroveWatch import prepare_data
+from MangroveWatch import landsat_function
 
 # Creation of directories
 # source : exercice 10 solution
@@ -19,13 +19,25 @@ if not os.path.exists("temp"):
 if not os.path.exists("output"):
     os.mkdirs("output")
 
-# Preparation of data
+### PREPARATION OF DATA ###
 
-# raster downloading
+# Downloading the raster from landsat
 # instruction to put the shapefile : in the README
 
-# Calculating the indexes
-years = [1990, 1996, 2003, 2010, 2016, 2020]
+years = [1996, 2003, 2010, 2016, 2020]
+
+# Specifying the parameters
+bbox =
+bands = ["Red", "NIR", "SWIR"]
+crs = 
+output_dir = "data/landsat_data"
+n_scenes =
+
+for year in years:
+    landsat_function.landsat_download(year, bbox, bands, crs, output_dir, n_scenes)
+
+
+### CALCULATION OF THE INDEXES ###
 
 NDVI_paths = []
 NDMI_paths = []
@@ -43,5 +55,6 @@ for year in years:
 # df_NDVI = pd.DataFrame({'year' : years, 'path' : NDVI_paths})
 # df_NDMI = pd.DataFrame({'year' : years, 'path' : NDMI_paths})
 
+### CREATION OF THE TIME SLIDER ###
 time_slider_maps.time_slider_raster(years, NDVI_paths)
 time_slider_maps.time_slider_raster(years, NDMI_paths)
