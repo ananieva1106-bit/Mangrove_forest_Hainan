@@ -1,22 +1,16 @@
 import rasterio
 
-# def extract_bands_landsat(year):
-#     """
-#     Extract the band depending on the type of landsat used
-#     Landsat 8 is used since 2015
-#     source : https://science.nasa.gov/mission/landsat/spectral-bands-and-applications/
-#     """
-#     # raster = year
-#     if year < 2015: # Landsat 5 is used
-#         SWIR = raster[[5]]
-#         NIR = raster[[4]]
-#         Red = raster[[3]]
-#     else: # Landsat 8 is used
-#         SWIR = raster[[6]]
-#         NIR = raster[[5]]
-#         Red = raster[[4]]
+def extract_bands(year):
+    """
+    Extract the individual bands of the raster
+    """
+    input_raster_fp = f"data/landsat_data/mask_{year}.tif"
+    with rasterio.open(input_raster_fp) as src:
+        swir = src["swir16"]
+        nir = src["nir08"]
+        red = src["red"]
 
-#     return SWIR, NIR, Red
+    return swir, nir, red
 
 
 
@@ -30,10 +24,10 @@ def calc_NDVI(NIR, Red, year):
     NDVI = (NIR - Red)/(NIR - Red)
 
     #Copy metadata of one of the raster
-    kwargs = NIR.meta 
+    out_meta = NIR.meta 
     path = f"temp/NDVI_{year}.tif"
     # Save the NDVI as a raster
-    with rasterio.open(path, 'w', **kwargs) as file:
+    with rasterio.open(path, 'w', **out_meta) as file:
         file.write(NDVI.astype(rasterio.float32))
     
     return path
@@ -47,11 +41,11 @@ def calc_NDMI(NIR, SWIR, year):
     NDMI = (NIR - SWIR)/(NIR + SWIR)
 
     #Copy metadata of one of the raster
-    kwargs = NIR.meta 
+    out_meta = NIR.meta 
     path = f"temp/NDMI_{year}.tif"
 
     # Save the NDMI as a raster
-    with rasterio.open(path, 'w', **kwargs) as file:
+    with rasterio.open(path, 'w', **out_meta) as file:
         file.write(NDMI.astype(rasterio.float32))
     
     return path
