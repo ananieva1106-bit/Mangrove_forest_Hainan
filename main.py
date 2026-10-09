@@ -47,14 +47,17 @@ for year in years:
 
 ### CALCULATION OF THE INDEXES ###
 
- NDVI_paths = []
- NDMI_paths = []
+#  NDVI_paths = []
+#  NDMI_paths = []
+ Frag_ratio = []
  for year in years:
     swir, nir, red, meta = index_calculation.extract_bands(year) 
 
     # Calculate the indexes
-    NDVI_paths.append(index_calculation.calc_NDVI(nir, red, year, meta))
-    NDMI_paths.append(index_calculation.calc_NDMI(nir, swir, year, meta))
+    # NDVI_paths.append(index_calculation.calc_NDVI(nir, red, year, meta))
+    # NDMI_paths.append(index_calculation.calc_NDMI(nir, swir, year, meta))
+    # Extract degree of fragmentation of mangrove forests (edge to area ratio) values as table 
+    Frag_ratio.append(index_calculation.fragm_index(year, bbox))
 
 # df_NDVI = pd.DataFrame({'year' : years, 'path' : NDVI_paths})
 # df_NDMI = pd.DataFrame({'year' : years, 'path' : NDMI_paths})
