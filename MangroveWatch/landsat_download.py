@@ -45,6 +45,7 @@ def landsat_download(year,bbox, bands, crs, output_dir, n_scenes):
     for b in bands:
         a = ds[b].values.astype("float32")
         a[bad | (a < 7273) | (a > 43636)] = np.nan
+        a = (a * 0.0000275) - 0.2 # Convert raw DS to reflectance values (Source: https://www.usgs.gov/landsat-missions/landsat-collection-2-surface-reflectance)
         layers.append(np.nanmedian(a, axis=0))
     arr = np.stack(layers).astype("float32")
 
