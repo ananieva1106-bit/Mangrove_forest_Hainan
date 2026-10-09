@@ -41,15 +41,15 @@ for year in years:
     #landsat_download.landsat_download(year, bbox, bands, crs, output_dir, n_scenes)
 
     # mask the raster to the extent of the mangrove
-    raster_masking_to_vector.mask_raster_to_vector(year, bbox)
-    #raster_masking_to_vector.extent_raster(year)
+    # raster_masking_to_vector.mask_raster_to_vector(year, bbox)
+    # raster_masking_to_vector.extent_raster(year, bbox) # trying to build map with timeslider using the vector data instead
 
 
 ### CALCULATION OF THE INDEXES ###
 
-# NDVI_paths = []
-# NDMI_paths = []
-# for year in years:
+ NDVI_paths = []
+ NDMI_paths = []
+ for year in years:
 #    swir, nir, red = index_calculation.extract_bands(year) 
 
 #     # Calculate the indexes
