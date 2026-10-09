@@ -10,6 +10,7 @@
 # Source: https://gis.stackexchange.com/questions/444062/clipping-raster-geotiff-with-a-vector-shapefile-in-python
 
 # Importing the packages neeed for the function
+from bqplot import shape
 import rasterio
 from rasterio.mask import mask
 import geopandas as gpd
@@ -49,23 +50,31 @@ def mask_raster_to_vector(year, bbox):
     with rasterio.open(output_raster_fp,'w',**out_meta) as dst:
         dst.write(out_image)
 
-def extent_raster(year):
+# def extent_raster(year, bbox):
 
-    # Specifyfing file path for the raster
-    input_raster_fp = f"data/landsat_data/mask_{year}.tif"
-    output_raster_fp = f"data/extent_{year}.tif"
+#     # Specifyfing file path for the input vector and output raster
+#     mangrove_shp = gpd.read_file(f'data/vector/mangrove{year}.shp', bbox)
+#     input_raster_fp = f'data/landsat_data/mask_{year}.tif'
+#     output_raster_fp = f"data/extent_{year}.tif"
 
-    with rasterio.open(input_raster_fp) as src:
-        array = src.read(1)
+#     with rasterio.open(input_raster_fp) as src:
+#         array = src.read(1)
+#         out_meta = src.meta.copy() # copying the meta data
+#         transform = src.transform
+       
+#     out_meta.update(count=1, dtype="uint8", nodata=0)
     
-    # Copying the raster and atributing value 1 to pixel withint the mangrove extent
-    extent_array = np.zeros_like(array[1], dtype=np.int32)
-    extent_array[array != 0] = 1
+#     shapes = (
+#         (geom, 1)
+#      for geom in mangrove_shp.geometry
+#      #if geom is not None and not geom.is_empty
+#     )
 
-    out_meta = input_raster_fp.meta.copy() # copying the meta data
+#     extent_array = rasterio.features.rasterize(shapes, transform = transform, out_shape = array.shape)
 
-    with rasterio.open(output_raster_fp,'w',**out_meta) as dst: # writing the tif file of the extent
-        dst.write(extent_array)
+
+#     with rasterio.open(output_raster_fp,'w',**out_meta) as dst: # writing the tif file of the extent
+#         dst.write(extent_array, 1)
 
 
 
