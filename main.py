@@ -4,7 +4,7 @@ import rasterio
 import pandas as pd
 
 # Importing the functions
-#from MangroveWatch import index_calculation
+from MangroveWatch import index_calculation
 #from MangroveWatch import time_slider_maps
 from MangroveWatch import landsat_download
 from MangroveWatch import raster_masking_to_vector
@@ -50,14 +50,14 @@ for year in years:
  NDVI_paths = []
  NDMI_paths = []
  for year in years:
-#    swir, nir, red = index_calculation.extract_bands(year) 
+    swir, nir, red = index_calculation.extract_bands(year) 
 
-#     # Calculate the indexes
-#     NDVI_paths.append(index_calculation.calc_NDVI(nir, red, year))
-#     NDMI_paths.append(index_calculation.calc_NDMI(nir, swir, year))
+    # Calculate the indexes
+    NDVI_paths.append(index_calculation.calc_NDVI(nir, red, year))
+    NDMI_paths.append(index_calculation.calc_NDMI(nir, swir, year))
 
-# # df_NDVI = pd.DataFrame({'year' : years, 'path' : NDVI_paths})
-# # df_NDMI = pd.DataFrame({'year' : years, 'path' : NDMI_paths})
+# df_NDVI = pd.DataFrame({'year' : years, 'path' : NDVI_paths})
+# df_NDMI = pd.DataFrame({'year' : years, 'path' : NDMI_paths})
 
 # ### CREATION OF THE TIME SLIDER ###
 # time_slider_maps.time_slider_raster(years, NDVI_paths)
