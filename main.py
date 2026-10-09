@@ -50,11 +50,11 @@ for year in years:
  NDVI_paths = []
  NDMI_paths = []
  for year in years:
-    swir, nir, red = index_calculation.extract_bands(year) 
+    swir, nir, red, meta = index_calculation.extract_bands(year) 
 
     # Calculate the indexes
-    NDVI_paths.append(index_calculation.calc_NDVI(nir, red, year))
-    NDMI_paths.append(index_calculation.calc_NDMI(nir, swir, year))
+    NDVI_paths.append(index_calculation.calc_NDVI(nir, red, year, meta))
+    NDMI_paths.append(index_calculation.calc_NDMI(nir, swir, year, meta))
 
 # df_NDVI = pd.DataFrame({'year' : years, 'path' : NDVI_paths})
 # df_NDMI = pd.DataFrame({'year' : years, 'path' : NDMI_paths})
