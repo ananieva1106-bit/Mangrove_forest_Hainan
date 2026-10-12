@@ -35,27 +35,31 @@ if not os.path.exists("temp"):
 if not os.path.exists("output"):
     os.mkdir("output")
 
-### PREPARATION OF DATA ###
-
-# Downloading the mangroves vector data through url: instruction to get the shapefile: please see the README.md 
-
-# Downloading the raster from landsat
 # Defining the years of interest
 years = [1996, 2003, 2010, 2016, 2020]
 
-# Specifying the parameters
+# Defining area of interest
 bbox = (108.506470, 18.151072, 111.088257, 20.190035)
+
+### DOWNLOADING THE DATA ###
+
+# Downloading the raster from landsat
+# Specifying the parameters
 bands = ["red", "nir08", "swir16"]
 crs = "EPSG:32649"
 output_dir = "data/landsat_data"
 n_scenes = 3
 
 for year in years:
-    #landsat_download.landsat_download(year, bbox, bands, crs, output_dir, n_scenes)
-    # mask the raster to the extent of the mangrove
-    raster_masking_to_vector.mask_raster_to_vector(year, bbox) 
-    # raster_masking_to_vector.extent_raster(year, bbox) # trying to build map with timeslider using the vector data instead # not used anymore
+    landsat_download.landsat_download(year, bbox, bands, crs, output_dir, n_scenes)
+ 
 
+### PREPARATION OF DATA ###
+# Masking the data 
+
+for year in years:
+    # mask the raster to the extent of the mangrove
+    raster_masking_to_vector.mask_raster_to_vector(year, bbox)
 
 ### CALCULATION OF THE INDEXES ###
 
