@@ -1,7 +1,10 @@
-### Running this script will download and unpack the .rar file containing 
-### shapefile vectors for mangrove cover in China from 1990 to 2020
+# Geoscripting project : Mangrove forests in Hainan, China
+# Authors : Elmo van den Beld, Aleksandra Ananieva, Lea Ehrensperger, Roxane Marguerat
+# Period 1, October 2026
+# This script is licensed under the MIT License
+# Sources are referenced throughout the script
 
-# Importing necessary packages
+# Importing the packages
 import urllib.request
 import patoolib
 import os
