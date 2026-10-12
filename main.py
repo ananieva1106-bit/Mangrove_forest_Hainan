@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 
 # Importing the functions
 from MangroveWatch import landsat_download
-from MangroveWatch import mangroves_download
+# from MangroveWatch import mangroves_download
 from MangroveWatch import raster_masking_to_vector
 from MangroveWatch import index_calculation
 
@@ -66,7 +66,7 @@ for year in years:
     Frag_ratio.append(index_calculation.fragm_index(year, bbox))
 
 df_frag = pd.DataFrame({'year' : years, 'fragmentation ratio' : Frag_ratio})
-plt.plot(df_frag) 
+plt.plot(Frag_ratio, years) 
 plt.savefig("output/Fragm_ratio_table.png")
 plt.show()
 # df_NDMI = pd.DataFrame({'year' : years, 'path' : NDMI_paths})
