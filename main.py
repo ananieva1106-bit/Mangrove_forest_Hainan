@@ -2,12 +2,13 @@
 import os
 import rasterio
 import pandas as pd
+import matplotlib as plt
 
 # Importing the functions
 from MangroveWatch import index_calculation
 #from MangroveWatch import time_slider_maps
 from MangroveWatch import landsat_download
-from MangroveWatch import mangroves_download
+# from MangroveWatch import mangroves_download
 from MangroveWatch import raster_masking_to_vector
 
 # Creation of directories
@@ -30,45 +31,48 @@ if not os.path.exists("output"):
 ### PREPARATION OF DATA ###
 
 # Downloading the mangroves vector data through url
-mangroves_download.mangroves_download()
+# mangroves_download.mangroves_download()
 
 # Downloading the raster from landsat
 # instruction to put the shapefile : in the README
 
-# years = [1996, 2003, 2010, 2016, 2020]
+years = [1996, 2003, 2010, 2016, 2020]
 
-# # Specifying the parameters
-# bbox = (108.506470, 18.151072, 111.088257, 20.190035)
-# bands = ["red", "nir08", "swir16"]
-# crs = "EPSG:32649"
-# output_dir = "data/landsat_data"
-# n_scenes = 3
+# Specifying the parameters
+bbox = (108.506470, 18.151072, 111.088257, 20.190035)
+bands = ["red", "nir08", "swir16"]
+crs = "EPSG:32649"
+output_dir = "data/landsat_data"
+n_scenes = 3
 
-# for year in years:
-#     #landsat_download.landsat_download(year, bbox, bands, crs, output_dir, n_scenes)
+for year in years:
+    landsat_download.landsat_download(year, bbox, bands, crs, output_dir, n_scenes)
 
-#     # mask the raster to the extent of the mangrove
-#     # raster_masking_to_vector.mask_raster_to_vector(year, bbox)
-#     # raster_masking_to_vector.extent_raster(year, bbox) # trying to build map with timeslider using the vector data instead
+    # mask the raster to the extent of the mangrove
+    raster_masking_to_vector.mask_raster_to_vector(year, bbox)
+    raster_masking_to_vector.extent_raster(year, bbox) # trying to build map with timeslider using the vector data instead
 
 
-# ### CALCULATION OF THE INDEXES ###
+### CALCULATION OF THE INDEXES ###
 
-# #  NDVI_paths = []
-# #  NDMI_paths = []
-#  Frag_ratio = []
-#  for year in years:
-#     swir, nir, red, meta = index_calculation.extract_bands(year) 
+NDVI_paths = []
+NDMI_paths = []
+Frag_ratio = []
+for year in years:
+    swir, nir, red, meta = index_calculation.extract_bands(year) 
 
-#     # Calculate the indexes
-#     # NDVI_paths.append(index_calculation.calc_NDVI(nir, red, year, meta))
-#     # NDMI_paths.append(index_calculation.calc_NDMI(nir, swir, year, meta))
-#     # Extract degree of fragmentation of mangrove forests (edge to area ratio) values as table 
-#     Frag_ratio.append(index_calculation.fragm_index(year, bbox))
+    # Calculate the indexes
+    # NDVI_paths.append(index_calculation.calc_NDVI(nir, red, year, meta))
+    # NDMI_paths.append(index_calculation.calc_NDMI(nir, swir, year, meta))
 
-# # df_NDVI = pd.DataFrame({'year' : years, 'path' : NDVI_paths})
-# # df_NDMI = pd.DataFrame({'year' : years, 'path' : NDMI_paths})
+    # Extract degree of fragmentation of mangrove forests (edge to area ratio) values as table 
+    Frag_ratio.append(index_calculation.fragm_index(year, bbox))
 
-# # ### CREATION OF THE TIME SLIDER ###
-# # time_slider_maps.time_slider_raster(years, NDVI_paths)
-# # time_slider_maps.time_slider_raster(years, NDMI_paths)
+df_frag = pd.DataFrame({'year' : years, 'fragmentation ratio' : Frag_ratio})
+plt.plot(df_frag) 
+plt.show()
+# df_NDMI = pd.DataFrame({'year' : years, 'path' : NDMI_paths})
+
+# ### CREATION OF THE TIME SLIDER ###
+# time_slider_maps.time_slider_raster(years, NDVI_paths)
+# time_slider_maps.time_slider_raster(years, NDMI_paths)
