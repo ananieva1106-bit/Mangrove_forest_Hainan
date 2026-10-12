@@ -21,19 +21,19 @@ areas_of_interest = {
         "label": "Area 1",
         "bounds": [[19.848175, 110.291598], [20.116546, 110.677381]],
         "center": [19.954933, 110.477444],
-        "zoom": 11,
+        "zoom": 10.5,
     },
     "area2": {
         "label": "Area 2",
         "bounds": [[19.668592, 109.114837], [19.973400, 109.588499]],
         "center": [19.821290, 109.351420],
-        "zoom": 11,
+        "zoom": 10.5,
     },
     "area3": {
         "label": "Area 3",
         "bounds": [[19.393506, 110.663167], [19.653592, 110.965212]],
         "center": [19.489583, 110.767949],
-        "zoom": 11,
+        "zoom": 10.5,
     },
 }
 
@@ -60,17 +60,19 @@ def tif_to_png_singleband(tif_path, png_path, cmap_name, vmin, vmax):
 # Load the mangrove shp files as gdf and convert to GeoJSON
 def get_extent_geojson(year):
     """Load the mangrove extent shapefile for a given year, as GeoJSON for dl.GeoJSON."""
-    gdf = gpd.read_file(f"data/vector/mangrove{year}.shp")
+    gdf = gpd.read_file(f"data/vector/Mangrove Dynamics in China/mangrove{year}.shp")
     return gdf.__geo_interface__
 
 
-# Source: https://www.dash-leaflet.com/
+# Sources: https://www.dash-leaflet.com/
+# https://community.plotly.com/t/extend-or-append-data-instead-of-update/8898/7
 # Drawing the main map, centered on Hainan
 app.layout = html.Div([
+    html.H1("Mangrove expansion in Hainan", style={'paddingTop': '20px', 'textAlign': 'center'}),
     dl.Map(
         id="map",
         center=[19.2, 109.8],
-        zoom=7,
+        zoom=8,
         children=[
             dl.TileLayer(),
             # Rectangles marking the three areas of interest
@@ -81,7 +83,8 @@ app.layout = html.Div([
         style={'height': '60vh'},
     ),
 
-    # Source: https://dash.plotly.com/component-argument-order
+    # Sources: https://dash.plotly.com/component-argument-order
+    # https://dash.plotly.com/dash-core-components/button
     # Generating the necessary buttons
     html.Div([
         html.Button("Area 1", id="btn-area1", n_clicks=0),
@@ -103,7 +106,8 @@ app.layout = html.Div([
     ),
 
     # Adding the slider with the years
-    # Source: https://dash.plotly.com/basic-callbacks#dash-app-layout-with-figure-and-slider
+    # Sources: https://dash.plotly.com/basic-callbacks#dash-app-layout-with-figure-and-slider
+    # https://dash.plotly.com/dash-core-components/slider
     dcc.Slider(
         min(years), max(years), step=None, value=min(years),
         marks={str(year): str(year) for year in years},
@@ -143,10 +147,12 @@ def update_map(selected_year, layer_choice):
         bounds = tif_to_png_singleband(raster_path, png_path, "YlGnBu", vmin=-0.5, vmax=0.5)
         layers.append(dl.ImageOverlay(url=f"/assets/{os.path.basename(png_path)}", bounds=bounds, opacity=0.8))
 
+    # Source: https://leafletjs.com/examples/geojson/
     # Mangrove extent is vector data (shapefile), not a raster (there's no need to convert it)
     elif layer_choice == "extent":
         geojson = get_extent_geojson(selected_year)
-        layers.append(dl.GeoJSON(data=geojson, id="extent-layer"))
+        layers.append(dl.GeoJSON(data=geojson, id="extent-layer", style={"color": "green", "fillColor": "green", "weight": 2, "fillOpacity": 0.5}))
+        
 
     # return all layers to this year/toggle
     return layers
@@ -168,7 +174,7 @@ def zoom_to_area(n1, n2, n3, n_reset):
     if triggered in mapping:
         a = areas_of_interest[mapping[triggered]]
         return dict(center=a["center"], zoom=a["zoom"], transition="flyTo")
-    return dict(center=[19.2, 109.8], zoom=7, transition="flyTo")
+    return dict(center=[19.2, 109.8], zoom=8, transition="flyTo")
 
 
 # Start the dash server

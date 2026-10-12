@@ -66,27 +66,6 @@ def calc_NDMI(NIR, SWIR, year, meta):
     return path
 
 
-# def fragm_index(year, bbox):
-#     """
-#     Calculate the edge-to-area ratio as an indicator for fragmentation
-#     :param year to find corresponding vector layer of magrove extent
-#     """
-
-#     mangrove_shp = gpd.read_file(f'data/vector/mangrove{year}.shp', bbox)
-#     #polygons_geoms = mangrove_shp.geoms
-
-#     for feature in mangrove_shp:
-#     #for polygon in polygons_geoms:
-#         # source: https://gis.stackexchange.com/questions/122957/how-to-calculate-the-perimeter-of-the-polygon-using-python-programming
-#         polygons = mangrove_shp[feature].geometry()
-#         for polygon in polygons:
-#             length = polygon.geometry.length() # perimeter of the polygon
-#             area = polygon.geometry.area() # area of the polygon
-#             polygon.ratio = length/area # edge-to-area ratio
-#     # source: https://stackoverflow.com/questions/31037298/pandas-get-column-average-mean    
-#     mean_ratio = mangrove_extent.ratio.mean() # average of the ratio for all polygons
-#     return mean_ratio
-
 def fragm_index(year, bbox):
     """
     Calculate the edge-to-area ratio as an indicator for fragmentation     
