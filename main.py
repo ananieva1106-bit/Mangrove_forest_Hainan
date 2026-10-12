@@ -1,3 +1,9 @@
+# Geoscripting project : Mangrove forests in Hainan, China
+# Authors : Elmo van den Beld, Aleksandra Ananieva, Lea Ehrensperger, Roxane Marguerat
+# Period 1, october 2026
+# This script is licensed under the MIT License
+# Sources are reference throughout the script
+
 # Importing packages
 import os
 import rasterio
@@ -9,6 +15,7 @@ from MangroveWatch import landsat_download
 # from MangroveWatch import mangroves_download
 from MangroveWatch import raster_masking_to_vector
 from MangroveWatch import index_calculation
+from MangroveWatch import plot
 
 
 # Creation of directories
@@ -54,7 +61,7 @@ for year in years:
 
 NDVI_paths = []
 NDMI_paths = []
-Frag_ratio = []
+frag_ratio = []
 for year in years:
     swir, nir, red, meta = index_calculation.extract_bands(year) 
 
@@ -63,14 +70,16 @@ for year in years:
     # NDMI_paths.append(index_calculation.calc_NDMI(nir, swir, year, meta))
 
     # Extract degree of fragmentation of mangrove forests (edge to area ratio) values as table 
-    Frag_ratio.append(index_calculation.fragm_index(year, bbox))
+    frag_ratio.append(index_calculation.fragm_index(year, bbox))
 
-df_frag = pd.DataFrame({'year' : years, 'fragmentation ratio' : Frag_ratio})
-plt.plot(Frag_ratio, years) 
-plt.savefig("output/Fragm_ratio_table.png")
-plt.show()
-# df_NDMI = pd.DataFrame({'year' : years, 'path' : NDMI_paths})
+# Putting the frag_ratio data into a table (as alternative plotting option)
+# df_frag = pd.DataFrame({'year' : years, 'fragmentation ratio' : frag_ratio})
 
-# ### CREATION OF THE TIME SLIDER ###
-# time_slider_maps.time_slider_raster(years, NDVI_paths)
-# time_slider_maps.time_slider_raster(years, NDMI_paths)
+# Plotting of the degree of fragmentation development over years
+title = "Degree of fragmentation of mangrove forests in Hainan"
+y_label = "Edge-to-area ratio of mangrove forests"
+caption = ("Degree of fragmentation is expressed through the edge-to-area ratio. "
+    "The ratio is calculated for the given years and mangrove forest extent "
+    "across Hainan Island.")
+
+plot.development_plot(years, frag_ratio, title, caption, y_label)
