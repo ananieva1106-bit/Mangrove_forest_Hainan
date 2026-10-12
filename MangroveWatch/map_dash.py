@@ -1,7 +1,4 @@
-# Sources: https://dash.plotly.com/basic-callbacks#dash-app-layout-with-figure-and-slider
-# https://nbviewer.org/format/script/github/jupyter-widgets/ipyleaflet/blob/0.16.0/examples/Numpy.ipynb
-# https://www.dash-leaflet.com/
-# https://dash.plotly.com/component-argument-order
+# Main sources: https://dash.plotly.com/basic-callbacks#dash-app-layout-with-figure-and-slider
 import os
 import numpy as np
 import rasterio
@@ -43,22 +40,6 @@ areas_of_interest = {
 years = [1996, 2003, 2010, 2016, 2020]
 
 
-# Source: https://nbviewer.org/format/script/github/jupyter-widgets/ipyleaflet/blob/0.16.0/examples/Numpy.ipynb
-# Convert tif files to png
-def tif_to_png_overlay(tif_path, png_path):
-    """Convert a 3-band true color GeoTIFF into a PNG + lat/lon bounds for dl.ImageOverlay."""
-    with rasterio.open(tif_path) as src:
-        arr = src.read([1, 2, 3])  # red, nir08, swir16
-        arr = np.clip(arr / np.nanpercentile(arr, 98) * 255, 0, 255).astype("uint8")
-        arr = np.moveaxis(arr, 0, -1)
-        Image.fromarray(arr).save(png_path)
-
-        west, south, east, north = transform_bounds(src.crs, "EPSG:4326", *src.bounds)
-        bounds = [[south, west], [north, east]]
-
-    return bounds
-
-
 # Source: https://matplotlib.org/stable/users/explain/colors/colormaps.html
 def tif_to_png_singleband(tif_path, png_path, cmap_name, vmin, vmax):
     """Convert a single band raster (NDVI/NDMI) into a colored PNG + lat/lon bounds."""
@@ -75,7 +56,7 @@ def tif_to_png_singleband(tif_path, png_path, cmap_name, vmin, vmax):
     return bounds
 
 
-# Source: https://geopandas.org/en/stable/docs/reference/api/geopandas.GeoSeries.to_json.html
+# Source: https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.__geo_interface__.html
 # Load the mangrove shp files as gdf and convert to GeoJSON
 def get_extent_geojson(year):
     """Load the mangrove extent shapefile for a given year, as GeoJSON for dl.GeoJSON."""
@@ -83,6 +64,7 @@ def get_extent_geojson(year):
     return gdf.__geo_interface__
 
 
+# Source: https://www.dash-leaflet.com/
 # Drawing the main map, centered on Hainan
 app.layout = html.Div([
     dl.Map(
@@ -99,6 +81,7 @@ app.layout = html.Div([
         style={'height': '60vh'},
     ),
 
+    # Source: https://dash.plotly.com/component-argument-order
     # Generating the necessary buttons
     html.Div([
         html.Button("Area 1", id="btn-area1", n_clicks=0),
@@ -108,15 +91,14 @@ app.layout = html.Div([
     ]),
 
     # Source: https://dash.plotly.com/dash-core-components/radioitems
-    # Toggle between #####true color, NDVI, NDMI, and mangrove extent
+    # Toggle between NDVI, NDMI, and mangrove extent
     dcc.RadioItems(
         options=[
-            {'label': 'True Color', 'value': 'truecolor'},
             {'label': 'NDVI', 'value': 'ndvi'},
             {'label': 'NDMI', 'value': 'ndmi'},
             {'label': 'Mangrove Extent', 'value': 'extent'},
         ],
-        value='truecolor',
+        value='ndvi',
         id='layer-toggle'
     ),
 
@@ -130,13 +112,16 @@ app.layout = html.Div([
 ])
 
 
+# Source: https://dash.plotly.com/basic-callbacks
 # Whenever the slider or the toggle changes, rebuild the map layers:
 # base tiles, the three area rectangles, and the selected layer
 @callback( # @callback makes dash interactive
     Output('map', 'children'),
     Input('year-slider', 'value'),
     Input('layer-toggle', 'value'))
-# def update_map(selected_year, layer_choice):
+
+def update_map(selected_year, layer_choice):
+    # layers that always shown, regadless of the year or the toggle choice
     layers = [
         dl.TileLayer(),
         dl.Rectangle(bounds=areas_of_interest["area1"]["bounds"], id="rect-area1"),
@@ -144,13 +129,9 @@ app.layout = html.Div([
         dl.Rectangle(bounds=areas_of_interest["area3"]["bounds"], id="rect-area3"),
     ]
 
-    if layer_choice == "truecolor":
-        raster_path = f"data/landsat_data/mask_{selected_year}.tif"
-        png_path = os.path.join("data", "assets", f"truecolor_{selected_year}.png")
-        bounds = tif_to_png_overlay(raster_path, png_path)
-        layers.append(dl.ImageOverlay(url=f"/assets/{os.path.basename(png_path)}", bounds=bounds, opacity=0.8))
-
-    elif layer_choice == "ndvi":
+    # Build the correct file path for the selected year, convert it to a PNG,
+    # and add it as the one data layer matching the current toggle choice
+    if layer_choice == "ndvi":
         raster_path = f"temp/NDVI_{selected_year}.tif"
         png_path = os.path.join("data", "assets", f"ndvi_{selected_year}.png")
         bounds = tif_to_png_singleband(raster_path, png_path, "RdYlGn", vmin=-0.2, vmax=0.8)
@@ -162,14 +143,17 @@ app.layout = html.Div([
         bounds = tif_to_png_singleband(raster_path, png_path, "YlGnBu", vmin=-0.5, vmax=0.5)
         layers.append(dl.ImageOverlay(url=f"/assets/{os.path.basename(png_path)}", bounds=bounds, opacity=0.8))
 
+    # Mangrove extent is vector data (shapefile), not a raster (there's no need to convert it)
     elif layer_choice == "extent":
         geojson = get_extent_geojson(selected_year)
         layers.append(dl.GeoJSON(data=geojson, id="extent-layer"))
 
+    # return all layers to this year/toggle
     return layers
-# has to be finished
+
 
 # One callback per zoom button (each just flies the map to its own area)
+# Soruce: https://dash.plotly.com/advanced-callbacks
 @callback(
     Output("map", "viewport"),
     Input("btn-area1", "n_clicks"),
