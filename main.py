@@ -2,14 +2,14 @@
 import os
 import rasterio
 import pandas as pd
-import matplotlib as plt
+import matplotlib.pyplot as plt
 
 # Importing the functions
-from MangroveWatch import index_calculation
-#from MangroveWatch import time_slider_maps
 from MangroveWatch import landsat_download
-# from MangroveWatch import mangroves_download
+from MangroveWatch import mangroves_download
 from MangroveWatch import raster_masking_to_vector
+from MangroveWatch import index_calculation
+
 
 # Creation of directories
 # source : exercice 10 solution
@@ -30,12 +30,10 @@ if not os.path.exists("output"):
 
 ### PREPARATION OF DATA ###
 
-# Downloading the mangroves vector data through url
-# mangroves_download.mangroves_download()
+# Downloading the mangroves vector data through url: instruction to get the shapefile: please see the README.md 
 
 # Downloading the raster from landsat
-# instruction to put the shapefile : in the README
-
+# Defining the years of interest
 years = [1996, 2003, 2010, 2016, 2020]
 
 # Specifying the parameters
@@ -46,11 +44,10 @@ output_dir = "data/landsat_data"
 n_scenes = 3
 
 for year in years:
-    landsat_download.landsat_download(year, bbox, bands, crs, output_dir, n_scenes)
-
+    #landsat_download.landsat_download(year, bbox, bands, crs, output_dir, n_scenes)
     # mask the raster to the extent of the mangrove
-    raster_masking_to_vector.mask_raster_to_vector(year, bbox)
-    raster_masking_to_vector.extent_raster(year, bbox) # trying to build map with timeslider using the vector data instead
+    raster_masking_to_vector.mask_raster_to_vector(year, bbox) 
+    # raster_masking_to_vector.extent_raster(year, bbox) # trying to build map with timeslider using the vector data instead # not used anymore
 
 
 ### CALCULATION OF THE INDEXES ###
@@ -70,6 +67,7 @@ for year in years:
 
 df_frag = pd.DataFrame({'year' : years, 'fragmentation ratio' : Frag_ratio})
 plt.plot(df_frag) 
+plt.savefig("output/Fragm_ratio_table.png")
 plt.show()
 # df_NDMI = pd.DataFrame({'year' : years, 'path' : NDMI_paths})
 
