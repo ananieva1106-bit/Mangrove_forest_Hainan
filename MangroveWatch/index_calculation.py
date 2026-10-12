@@ -1,16 +1,30 @@
+# Geoscripting project : Mangrove forests in Hainan, China
+# Authors : Elmo van den Beld, Aleksandra Ananieva, Lea Ehrensperger, Roxane Marguerat
+# Period 1, october 2026
+# This script is licensed under the MIT License
+# Sources are reference throughout the script
+
+# This script implements functions to calculate of indexes on raster bands and vector shapefiles
+
+# Importing the packages
 import rasterio
 import geopandas as gpd
-from shapely import MultiPolygon
 
 def extract_bands(year):
     """
-    Extract the individual bands of the raster
+    Extracts the individual swir, nir and red bands out of the raster
+    Extracts the meta data of the raster.
+    :param year = year of the raster image.
     """
     input_raster_fp = f"data/landsat_data/mask_{year}.tif"
+
+    # Extracting the bands by calling them in the order defined in raster downloading function.
     with rasterio.open(input_raster_fp) as src:
         swir = src.read(3)
         nir = src.read(2)
         red = src.read(1)
+
+        # Extracting the meta data to use to write raster files in index calculations.
         out_meta = src.meta.copy()
 
     return swir, nir, red, out_meta
@@ -20,14 +34,15 @@ def extract_bands(year):
 
 def calc_NDVI(NIR, Red, year, meta):
     """
-    Calculate the NDVI, normalized difference vegetation index
-    :param NIR = near infrared band, Red = red band, year = year of satellite image
+    Calculates the NDVI (normalized difference vegetation index), creates a tif file and returns its path
+    :param NIR = near infrared band, Red = red band, year = year of raster image, meta = metadata from raster image
     """
-    # NDVI = np.zeroes_like(NIR)
     NDVI = (NIR - Red)/(NIR + Red)
 
-    path = f"temp/NDVI_{year}.tif"
-    # Save the NDVI as a raster
+    # Creating the file path
+    path = f"output/NDVI_{year}.tif"
+
+    # Saving the NDVI as a raster
     with rasterio.open(path, 'w', **meta) as file:
         file.write(NDVI.astype(rasterio.float32), 1)
     
@@ -36,14 +51,15 @@ def calc_NDVI(NIR, Red, year, meta):
 
 def calc_NDMI(NIR, SWIR, year, meta):
     """
-    Calculate the NDMI, normalized difference moisture index
-    :param NIR = near infrared band, SWIR = short-wave infrared band, year = year of satellite image
+    Calculate the NDMI (normalized difference moisture index), creates a tif file and returns its path
+    :param NIR = near infrared band, SWIR = short-wave infrared band, year = year of satellite image, meta = metadata from raster image
     """
     NDMI = (NIR - SWIR)/(NIR + SWIR)
 
-    path = f"temp/NDMI_{year}.tif"
+    # Creating the file path
+    path = f"output/NDMI_{year}.tif"
 
-    # Save the NDMI as a raster
+    # Saving the NDMI as a raster
     with rasterio.open(path, 'w', **meta) as file:
         file.write(NDMI.astype(rasterio.float32), 1)
     
@@ -74,12 +90,12 @@ def calc_NDMI(NIR, SWIR, year, meta):
 def fragm_index(year, bbox):
     """
     Calculate the edge-to-area ratio as an indicator for fragmentation     
-    :param year to find corresponding vector layer of magrove extent and bbox to read the vector file as geodataframe. 
+    :param year of the mangrove extent and bbox to read the vector file as geodataframe. 
     """
-    # opening the vector data containing mangrove extent as a geodataframe
-    gdf = gpd.read_file(f"data/vector/mangrove{year}.shp", bbox=bbox)
-    
-    # bring the data to a projection in meters to be able to run calculations with length and area
+    # Opening the vector data containing mangrove extent as a geodataframe
+    gdf = gpd.read_file(f"data/vector/Mangrove Dynamics in China/mangrove{year}.shp", bbox=bbox)
+
+    # Bringing the data to a projection in meters to be able to run calculations with length and area
     gdf = gdf.to_crs("EPSG:32649")
     
     # Calculating the edge-to-area ratio for the mangrove forest extent, given a year
