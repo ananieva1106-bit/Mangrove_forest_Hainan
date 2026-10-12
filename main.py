@@ -1,3 +1,9 @@
+# Geoscripting project : Mangrove forests in Hainan, China
+# Authors : Elmo van den Beld, Aleksandra Ananieva, Lea Ehrensperger, Roxane Marguerat
+# Period 1, october 2026
+# This script is licensed under the MIT License
+# Sources are reference throughout the script
+
 # Importing packages
 import os
 import rasterio
@@ -77,9 +83,3 @@ caption = ("Degree of fragmentation is expressed through the edge-to-area ratio.
     "across Hainan Island.")
 
 plot.development_plot(years, frag_ratio, title, caption, y_label)
-
-# df_NDMI = pd.DataFrame({'year' : years, 'path' : NDMI_paths})
-
-# ### CREATION OF THE TIME SLIDER ###
-# time_slider_maps.time_slider_raster(years, NDVI_paths)
-# time_slider_maps.time_slider_raster(years, NDMI_paths)

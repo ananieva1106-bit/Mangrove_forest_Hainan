@@ -14,6 +14,8 @@ def development_plot(years, index, title, caption, y_label):
     Plots development of a index variable over given years. 
     : param years: years of interest, index: variable of interest (e.g. fragmentation ratio of mangrove forests), 
     title of the plot, caption of the plot explaining the variables, y_label: brief explanation of variable of interest
+    sources : https://stackoverflow.com/questions/34010205/adding-caption-below-x-axis-for-a-scatter-plot-using-matplotlib
+              https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.figtext.html
     """
     # Creating the figure and subplot, as well as defining figure size
     fig, ax = plt.subplots(figsize=(8, 5))
