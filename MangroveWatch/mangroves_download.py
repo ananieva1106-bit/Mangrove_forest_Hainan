@@ -18,5 +18,8 @@ else:
     print('RAR file already downloaded!')
 
 # Unpacking the rar file (Source: https://stackoverflow.com/a/26178369)
-patoolib.extract_archive("data/vector/mangroveschina.rar", outdir="data/vector")
+if not os.path.exists('data/vector/Mangrove Dynamics in China'):
+    patoolib.extract_archive("data/vector/mangroveschina.rar", outdir="data/vector", interactive=False)
+else:
+    print('Folder containing the vector shapefiles already exist!')
 
