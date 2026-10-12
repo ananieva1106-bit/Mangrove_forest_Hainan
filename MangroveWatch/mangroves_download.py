@@ -4,12 +4,19 @@
 # This script is licensed under the MIT License
 # Sources are referenced throughout the script
 
+# This script downloads extent of mangrove cover as shapefile vector 
+# for the region of China between 1990 and 2020
+# Run this script first before main.py, see README.md for instructions
+
 # Importing the packages
 import urllib.request
 import patoolib
 import os
 
-# Create vector folder subdirectory here independently of main.py (Source: Exercise 10 solution)
+# Creating data/vector subdirectories here independently of main.py 
+if not os.path.exists("data"): # Source: Exercise 10 solution
+    os.mkdir("data")
+
 if not os.path.exists("data/vector"):
     os.mkdir("data/vector")
 
