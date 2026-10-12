@@ -6,7 +6,7 @@ platforms = ["linux-64"]
 version = "0.1.0"
 
 [tasks]
-mangrovesdownload = "python run MangrovesWatch/mangroves_download.py"
+mangrovesdownload = "python MangroveWatch/mangroves_download.py"
 
 [dependencies]
 python = ">=3.14.7,<3.15"
