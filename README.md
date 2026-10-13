@@ -18,6 +18,10 @@ All these indexes as well as the cover area of the mangrove are vizualized on an
 
 
 ## Instruction for running
+First, isntall the environment by running 
+
+`pixi install`
+
 In order to correctly carry out the first step of the pipeline (downloading the Mangrove cover in China vector dataset),
 the function has to be ran as a task through pixi from the bash (or pixi) shell.
 
@@ -38,10 +42,11 @@ Then in the pixi terminal type:
 Once the Mangrove cover in China dataset in downloaded, simply run the main.py script.
 
 ## Instruction to retrieve data manually (if needed)
-We made our data available on Teams ***(put a link ?)*** in case something goes wrong with the downloading, so it's still possible to run the rest of the script; or if it takes too long to download everything from the script.
+The script is supposed to retrieve the data automatically.
+However, in case something goes wrong with the downloading, or if it takes too long to download everything from the script, we made our data available on Teams ***(put a link ?)*** so it's still possible to run the rest of the script.
 
 Before running the main script :
-- Put the content of "mangrove vector data " in the following directory :
+- Put the content of "vector data " in the following directory :
 
 `data/vector/Mangrove Dynamics in China`
 
@@ -53,12 +58,17 @@ Before running the main script :
 - Skip the instruction about downlaoding the mangrove data using pixi and run main.py normally
 
 
-## Data sources (to update ?)
-https://www.scidb.cn/en/detail?dataSetId=195bcf0052384d599917c2f656e2dc4a#detail_start <- link to mangrove vector data from 1990 to 2020 in China
+## Data sources
+- Mangrove extent vector data :
+https://www.scidb.cn/en/detail?dataSetId=195bcf0052384d599917c2f656e2dc4a#detail_start 
 
-Bbox for Hainan from bboxfinder.com: 
-- EPSG4326 WGS84: 108.506470, 18.151072, 111.088257, 20.190035,  (Lng/Lat) # (Lng/Lat) is the preferred method for python functionality
-- EPSG3857 WGS84: 2055238.8165,12078884.9577,2295556.8335,12366288.1841 (Lat/Lng)
-
+- Catalogue use to retrive landsat data:
 https://earthdatascience.org/courses/use-data-open-source-python/multispectral-remote-sensing/landsat-in-Python/
+
+- Bbox for Hainan from bboxfinder.com: 
+
+    EPSG4326 WGS84: 108.506470, 18.151072, 111.088257, 20.190035,  (Lng/Lat) # (Lng/Lat) is the preferred method for python functionality
+https://bboxfinder.com/#0.000000,0.000000,0.000000,0.000000
+
+
 
