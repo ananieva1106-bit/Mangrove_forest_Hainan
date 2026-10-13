@@ -15,6 +15,7 @@ from MangroveWatch import landsat_download
 from MangroveWatch import raster_masking_to_vector
 from MangroveWatch import index_calculation
 from MangroveWatch import plot
+from MangroveWatch import map_dash
 
 # Creation of directories
 # source : exercice 10 solution
@@ -68,7 +69,7 @@ for year in years:
     # Extract degree of fragmentation of mangrove forests (edge to area ratio) values as table 
     frag_ratio.append(index_calculation.fragm_index(year, bbox))
 
-Putting the frag_ratio data into a table (as alternative plotting option)
+# Putting the frag_ratio data into a table (as alternative plotting option)
 df_frag = pd.DataFrame({'year' : years, 'fragmentation ratio' : frag_ratio})
 
 # Plotting of the degree of fragmentation development over years
@@ -79,3 +80,7 @@ caption = ("Degree of fragmentation is expressed through the edge-to-area ratio.
     "across Hainan Island.")
 
 plot.development_plot(years, frag_ratio, title, caption, y_label)
+
+### VISUALIZATION ###
+from MangroveWatch import map_dash
+map_dash.run_dashboard()
