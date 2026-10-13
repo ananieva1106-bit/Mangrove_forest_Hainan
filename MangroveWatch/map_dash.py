@@ -136,13 +136,13 @@ def update_map(selected_year, layer_choice):
     # Build the correct file path for the selected year, convert it to a PNG,
     # and add it as the one data layer matching the current toggle choice
     if layer_choice == "ndvi":
-        raster_path = f"temp/NDVI_{selected_year}.tif"
+        raster_path = f"output/NDVI_{selected_year}.tif"
         png_path = os.path.join("data", "assets", f"ndvi_{selected_year}.png")
         bounds = tif_to_png_singleband(raster_path, png_path, "RdYlGn", vmin=-0.2, vmax=0.8)
         layers.append(dl.ImageOverlay(url=f"/assets/{os.path.basename(png_path)}", bounds=bounds, opacity=0.8))
 
     elif layer_choice == "ndmi":
-        raster_path = f"temp/NDMI_{selected_year}.tif"
+        raster_path = f"output/NDMI_{selected_year}.tif"
         png_path = os.path.join("data", "assets", f"ndmi_{selected_year}.png")
         bounds = tif_to_png_singleband(raster_path, png_path, "YlGnBu", vmin=-0.5, vmax=0.5)
         layers.append(dl.ImageOverlay(url=f"/assets/{os.path.basename(png_path)}", bounds=bounds, opacity=0.8))
