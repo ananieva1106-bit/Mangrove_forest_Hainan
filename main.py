@@ -12,25 +12,17 @@ import matplotlib.pyplot as plt
 
 # Importing the functions
 from MangroveWatch import landsat_download
-# from MangroveWatch import mangroves_download
 from MangroveWatch import raster_masking_to_vector
 from MangroveWatch import index_calculation
 from MangroveWatch import plot
 
-
 # Creation of directories
 # source : exercice 10 solution
-if not os.path.exists("data"):
-    os.mkdir("data")
+if not os.path.exists("data/vector"):
+    raise FileNotFoundError("Data/vector subdirectories not found. See README.md: run pixi task mangrovesdownload first...")
 
 if not os.path.exists("data/landsat_data"):
     os.mkdir("data/landsat_data")
-
-if not os.path.exists("data/vector"):
-    os.mkdir("data/vector")
-
-if not os.path.exists("temp"):
-    os.mkdir("temp")
 
 if not os.path.exists("output"):
     os.mkdir("output")
@@ -54,7 +46,7 @@ for year in years:
     landsat_download.landsat_download(year, bbox, bands, crs, output_dir, n_scenes)
  
 
-### PREPARATION OF DATA ###
+## PREPARATION OF DATA ###
 # Masking the data 
 
 for year in years:
@@ -70,14 +62,14 @@ for year in years:
     swir, nir, red, meta = index_calculation.extract_bands(year) 
 
     # Calculate the indexes
-    # NDVI_paths.append(index_calculation.calc_NDVI(nir, red, year, meta))
-    # NDMI_paths.append(index_calculation.calc_NDMI(nir, swir, year, meta))
+    NDVI_paths.append(index_calculation.calc_NDVI(nir, red, year, meta))
+    NDMI_paths.append(index_calculation.calc_NDMI(nir, swir, year, meta))
 
     # Extract degree of fragmentation of mangrove forests (edge to area ratio) values as table 
     frag_ratio.append(index_calculation.fragm_index(year, bbox))
 
-# Putting the frag_ratio data into a table (as alternative plotting option)
-# df_frag = pd.DataFrame({'year' : years, 'fragmentation ratio' : frag_ratio})
+Putting the frag_ratio data into a table (as alternative plotting option)
+df_frag = pd.DataFrame({'year' : years, 'fragmentation ratio' : frag_ratio})
 
 # Plotting of the degree of fragmentation development over years
 title = "Degree of fragmentation of mangrove forests in Hainan"
