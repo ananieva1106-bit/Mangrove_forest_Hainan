@@ -1,3 +1,13 @@
+# Geoscripting project : Mangrove forests in Hainan, China
+# Authors : Elmo van den Beld, Aleksandra Ananieva, Lea Ehrensperger, Roxane Marguerat
+# Period 1, october 2026
+# This script is licensed under the MIT License
+# Sources are reference throughout the script
+
+# This script implements the dashboard visualization of the previously prepared data. 
+# Note: Most things are hard coded - with more time we would have soft coded this script also. 
+
+
 # Main sources: https://dash.plotly.com/basic-callbacks#dash-app-layout-with-figure-and-slider
 import os
 import numpy as np

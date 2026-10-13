@@ -4,7 +4,7 @@
 # This script is licensed under the MIT License
 # Sources are reference throughout the script
 
-# This script implements functions to plot indexes o
+# This script implements functions to plot indexes 
 
 # Importing the packages
 import matplotlib.pyplot as plt
