@@ -90,10 +90,5 @@ plot.development_plot(years, frag_ratio, title, caption, y_label)
 # Creation of the dashboard with NDVI, NDMI and extent map and fragmentation plot
 # Most thigs are hard coded in the map_dash file, so the NDVI and NDMI path list are not used.
 # With more time we would have softcoded the dashboard creation, that's why we chose to keep the lists even though they're not directly used.
-map_dash_not_hardcoded.run_dashboard(
-    years_param=years
-    output_dir= "output"
-    vector_dir = "data/vector/Mangrove Dynamics in China"
-)
 
 map_dash.run_dashboard()
