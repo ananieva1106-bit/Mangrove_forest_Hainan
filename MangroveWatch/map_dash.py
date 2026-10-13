@@ -180,3 +180,8 @@ def zoom_to_area(n1, n2, n3, n_reset):
 # Start the dash server
 if __name__ == '__main__':
     app.run(debug=True)
+
+
+# Run in main
+def run_dashboard():
+    app.run(debug=True)
