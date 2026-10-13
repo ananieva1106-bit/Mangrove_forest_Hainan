@@ -45,7 +45,7 @@ Once the Mangrove cover in China dataset in downloaded, simply run the main.py s
 
 ## Instruction to retrieve data manually (if needed)
 The script is supposed to retrieve the data automatically.
-However, in case something goes wrong with the downloading, or if it takes too long to download everything from the script, we made our data available on Teams (https://wageningenur4.sharepoint.com/:f:/s/Geoscripting-MangroveWatch/IgAwigoJ2lGCR7SoWSx-h5JSAUY9uhcNlea80h5TtdGHbyU?e=4WTPjZ) so it's still possible to run the rest of the script.
+However, in case something goes wrong with the downloading, or if it takes too long to download everything from the script, we made our data available on Teams (https://wageningenur4.sharepoint.com/:f:/s/Geoscripting-MangroveWatch/IgAwigoJ2lGCR7SoWSx-h5JSAUY9uhcNlea80h5TtdGHbyU?e=008M3h) so it's still possible to run the rest of the script.
 
 Before running the main script :
 - Put the content of "vector data " in the following directory :
