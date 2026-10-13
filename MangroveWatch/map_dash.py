@@ -14,6 +14,7 @@ import numpy as np
 import rasterio
 import geopandas as gpd
 import matplotlib.colors
+import matplotlib as mpl
 import matplotlib.cm as cm
 import plotly.express as px 
 from rasterio.warp import transform_bounds
@@ -62,7 +63,7 @@ def tif_to_png_singleband(tif_path, png_path, cmap_name, vmin, vmax):
     with rasterio.open(tif_path) as src:
         arr = src.read(1)
         norm = matplotlib.colors.Normalize(vmin=vmin, vmax=vmax)
-        cmap = cm.get_cmap(cmap_name)
+        cmap = mpl.colormaps(cmap_name)
         rgba = (cmap(norm(arr)) * 255).astype("uint8")
         Image.fromarray(rgba, mode="RGBA").save(png_path)
 
