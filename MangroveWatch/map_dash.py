@@ -15,6 +15,7 @@ import rasterio
 import geopandas as gpd
 import matplotlib.colors
 import matplotlib.cm as cm
+import plotly.express as px 
 from rasterio.warp import transform_bounds
 from PIL import Image
 from dash import Dash, dcc, html, Input, Output, callback, ctx
@@ -49,6 +50,11 @@ areas_of_interest = {
 
 years = [1996, 2003, 2010, 2016, 2020]
 
+from MangroveWatch import index_calculation
+
+bbox = (108.506470, 18.151072, 111.088257, 20.190035)
+frag_ratio = [index_calculation.fragm_index(year, bbox) for year in years]
+
 
 # Source: https://matplotlib.org/stable/users/explain/colors/colormaps.html
 def tif_to_png_singleband(tif_path, png_path, cmap_name, vmin, vmax):
@@ -74,55 +80,80 @@ def get_extent_geojson(year):
     return gdf.__geo_interface__
 
 
-# Sources: https://www.dash-leaflet.com/
-# https://community.plotly.com/t/extend-or-append-data-instead-of-update/8898/7
+# Source: https://dash.plotly.com/dash-core-components/graph
+def create_fragmentation_figure(years, frag_ratio):
+    """Build an interactive line chart of the mangrove fragmentation index over time."""
+    fig = px.line(
+        x=years, y=frag_ratio, markers=True,
+        labels={"x": "Years", "y": "Edge-to-area ratio of mangrove forests"},
+        title="Degree of fragmentation of mangrove forests in Hainan",
+    )
+    return fig
+
+
+# Source: https://developer.mozilla.org/en-US/docs/Web/CSS/Guides/Flexible_box_layout/Basic_concepts
 # Drawing the main map, centered on Hainan
 app.layout = html.Div([
+    # Source: https://community.plotly.com/t/extend-or-append-data-instead-of-update/8898/7
     html.H1("Mangrove expansion in Hainan", style={'paddingTop': '20px', 'textAlign': 'center'}),
-    dl.Map(
-        id="map",
-        center=[19.2, 109.8],
-        zoom=8,
-        children=[
-            dl.TileLayer(),
-            # Rectangles marking the three areas of interest
-            dl.Rectangle(bounds=areas_of_interest["area1"]["bounds"], id="rect-area1"),
-            dl.Rectangle(bounds=areas_of_interest["area2"]["bounds"], id="rect-area2"),
-            dl.Rectangle(bounds=areas_of_interest["area3"]["bounds"], id="rect-area3"),
-        ],
-        style={'height': '60vh'},
-    ),
 
-    # Sources: https://dash.plotly.com/component-argument-order
-    # https://dash.plotly.com/dash-core-components/button
-    # Generating the necessary buttons
+    # # Source: https://www.dash-leaflet.com/
     html.Div([
-        html.Button("Area 1", id="btn-area1", n_clicks=0),
-        html.Button("Area 2", id="btn-area2", n_clicks=0),
-        html.Button("Area 3", id="btn-area3", n_clicks=0),
-        html.Button("Reset view", id="btn-reset", n_clicks=0),
-    ]),
 
-    # Source: https://dash.plotly.com/dash-core-components/radioitems
-    # Toggle between NDVI, NDMI, and mangrove extent
-    dcc.RadioItems(
-        options=[
-            {'label': 'NDVI', 'value': 'ndvi'},
-            {'label': 'NDMI', 'value': 'ndmi'},
-            {'label': 'Mangrove Extent', 'value': 'extent'},
-        ],
-        value='ndvi',
-        id='layer-toggle'
-    ),
+        # Left side: map + controls
+        html.Div([
+            dl.Map(
+                id="map",
+                center=[19.2, 109.8],
+                zoom=8,
+                children=[
+                    dl.TileLayer(),
+                    # Rectangles marking the three areas of interest
+                    dl.Rectangle(bounds=areas_of_interest["area1"]["bounds"], id="rect-area1"),
+                    dl.Rectangle(bounds=areas_of_interest["area2"]["bounds"], id="rect-area2"),
+                    dl.Rectangle(bounds=areas_of_interest["area3"]["bounds"], id="rect-area3"),
+                ],
+                style={'height': '60vh'},
+            ),
 
-    # Adding the slider with the years
-    # Sources: https://dash.plotly.com/basic-callbacks#dash-app-layout-with-figure-and-slider
-    # https://dash.plotly.com/dash-core-components/slider
-    dcc.Slider(
-        min(years), max(years), step=None, value=min(years),
-        marks={str(year): str(year) for year in years},
-        id='year-slider'
-    ),
+            # Sources: https://dash.plotly.com/component-argument-order
+            # https://dash.plotly.com/dash-core-components/button
+            # Generating the necessary buttons
+            html.Div([
+                html.Button("Area 1", id="btn-area1", n_clicks=0),
+                html.Button("Area 2", id="btn-area2", n_clicks=0),
+                html.Button("Area 3", id="btn-area3", n_clicks=0),
+                html.Button("Reset view", id="btn-reset", n_clicks=0),
+            ]),
+
+            # Source: https://dash.plotly.com/dash-core-components/radioitems
+            # Toggle between NDVI, NDMI, and mangrove extent
+            dcc.RadioItems(
+                options=[
+                    {'label': 'NDVI', 'value': 'ndvi'},
+                    {'label': 'NDMI', 'value': 'ndmi'},
+                    {'label': 'Mangrove Extent', 'value': 'extent'},
+                ],
+                value='ndvi',
+                id='layer-toggle'
+            ),
+
+            # Adding the slider with the years
+            # Sources: https://dash.plotly.com/basic-callbacks#dash-app-layout-with-figure-and-slider
+            # https://dash.plotly.com/dash-core-components/slider
+            dcc.Slider(
+                min(years), max(years), step=None, value=min(years),
+                marks={str(year): str(year) for year in years},
+                id='year-slider'
+            ),
+        ], style={'flex': '2'}),
+
+        # Right side: the interactive fragmentation graph
+        html.Div([
+            dcc.Graph(figure=create_fragmentation_figure(years, frag_ratio)),
+        ], style={'flex': '1', 'padding': '20px'}),
+
+    ], style={'display': 'flex'}),
 ])
 
 
@@ -189,7 +220,7 @@ def zoom_to_area(n1, n2, n3, n_reset):
 
 # Start the dash server
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, use_reloader=False)
 
 
 # Run in main
