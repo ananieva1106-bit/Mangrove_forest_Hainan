@@ -7,14 +7,16 @@
 *Sources are reference throughout the script*
 
 ## Description of the project
-The objective of our project is to visualize the changes in health, cover and quality of mangrove forest on Hainan Island (China).
+The objective of our project is to visualize the changes in health, cover and quality of mangrove forests on Hainan Island (China).
 
-The health and quality of mangrove forest is defined by three indexes :
-- NDVI : normalized difference vegetation index
-- NDMI : normalized difference moisture index
-- Fragmentation index assessed by the edge-to-area ratio
+The health and quality of mangrove forest are indicated by three indexes :
+- NDVI : normalized difference vegetation index (range: -1 to 1; detecting how "green" vegetation is; the closer the index value is to 1, the greener vegetation is)
+- NDMI : normalized difference moisture index (range: -1 to 1; detecting how "moist" vegetation is; the closer the index value is to 1, the higher the moisture of vegetation)
+- Fragmentation index assessed by the edge-to-area ratio (the lower the value, the less mangrove forests are fragmented)
 
-All these indexes as well as the cover area of the mangrove are vizualized on an interactive map over on time points between 1996 and 2020.
+For more information on NMVI and NDMI, we suggest to consult the folowing web-page: https://www.agricolus.com/en/vegetation-indices-ndvi-ndmi/ 
+
+All these indexes as well as the cover area of the mangrove are vizualized on an interactive map over time points between 1996 and 2020.
 
 
 ## Instruction for running
@@ -43,7 +45,7 @@ Once the Mangrove cover in China dataset in downloaded, simply run the main.py s
 
 ## Instruction to retrieve data manually (if needed)
 The script is supposed to retrieve the data automatically.
-However, in case something goes wrong with the downloading, or if it takes too long to download everything from the script, we made our data available on Teams ***(put a link ?)*** so it's still possible to run the rest of the script.
+However, in case something goes wrong with the downloading, or if it takes too long to download everything from the script, we made our data available on Teams (https://wageningenur4.sharepoint.com/:f:/s/Geoscripting-MangroveWatch/IgAwigoJ2lGCR7SoWSx-h5JSAUY9uhcNlea80h5TtdGHbyU?e=4WTPjZ) so it's still possible to run the rest of the script.
 
 Before running the main script :
 - Put the content of "vector data " in the following directory :
