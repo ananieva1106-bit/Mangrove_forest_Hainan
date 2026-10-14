@@ -4,7 +4,7 @@
 
 *This script is licensed under the MIT License*
 
-*Sources are reference throughout the script*
+*Sources are referenced throughout the script*
 
 ## Description of the project
 The objective of our project is to visualize the changes in health, cover and quality of mangrove forests on Hainan Island (China).
@@ -19,7 +19,7 @@ For more information on NMVI and NDMI, we suggest to consult the folowing web-pa
 All these indexes as well as the cover area of the mangrove are vizualized on an interactive map over time points between 1996 and 2020.
 
 
-## Instruction for running
+## Instructions for running
 First, isntall the environment by running 
 
 `pixi install`
@@ -33,7 +33,7 @@ In the bash terminal type:
 ``pixi run mangrovesdownload``
 
 **Option 2** - from the pixi shell:
-In the bash terminal open the pixi shell by tiping: 
+In the bash terminal open the pixi shell by typing: 
 
 `pixi shell`
 
@@ -41,7 +41,7 @@ Then in the pixi terminal type:
 
 `run mangrovesdownload`
 
-Once the Mangrove cover in China dataset in downloaded, simply run the main.py script.
+Once the Mangrove cover in China dataset in downloaded, simply run the `main.py` script.
 
 Note : the layers can take a little time to show on the dashboard
 
@@ -50,7 +50,7 @@ The script is supposed to retrieve the data automatically.
 However, in case something goes wrong with the downloading, or if it takes too long to download everything from the script, we made our data available on Teams (https://wageningenur4.sharepoint.com/:f:/s/Geoscripting-MangroveWatch/IgAwigoJ2lGCR7SoWSx-h5JSAUY9uhcNlea80h5TtdGHbyU?e=008M3h) so it's still possible to run the rest of the script.
 
 Before running the main script :
-- Put the content of "vector data " in the following directory :
+- Put the content of "vector data" in the following directory :
 
 `data/vector/Mangrove Dynamics in China`
 
@@ -61,6 +61,11 @@ Before running the main script :
 - Comment the section DOWNLOAD DATA in main.py
 - Skip the instruction about downlaoding the mangrove data using pixi and run main.py normally
 
+### OPTIONAL: Instruction to change the years chosen for the analysis
+If the user wishes to analyze different years than the default ones, this can be done by changing the `years` variable to include the years the user wishes to utilize (ranging from 1996 to 2020). Updating this variable has to be done **in the same way** in these two places:
+
+1. In `main.py`
+2. In `map_dash.py`
 
 ## Data sources
 - Mangrove extent vector data :
@@ -70,9 +75,7 @@ https://www.scidb.cn/en/detail?dataSetId=195bcf0052384d599917c2f656e2dc4a#detail
 https://earthdatascience.org/courses/use-data-open-source-python/multispectral-remote-sensing/landsat-in-Python/
 
 - Bbox for Hainan from bboxfinder.com: 
-
-    EPSG4326 WGS84: 108.506470, 18.151072, 111.088257, 20.190035,  (Lng/Lat) # (Lng/Lat) is the preferred method for python functionality
-https://bboxfinder.com/#0.000000,0.000000,0.000000,0.000000
+https://bboxfinder.com
 
 
 
