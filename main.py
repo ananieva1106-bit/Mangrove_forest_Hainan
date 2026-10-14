@@ -27,7 +27,7 @@ if not os.path.exists("output"):
     os.mkdir("output")
 
 # Defining the years of interest
-years = [1996, 2003, 2010, 2016, 2020]
+years = [1996, 2002, 2010, 2015, 2020]
 
 # Defining area of interest
 bbox = (108.506470, 18.151072, 111.088257, 20.190035)
