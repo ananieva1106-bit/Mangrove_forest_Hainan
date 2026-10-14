@@ -68,7 +68,11 @@ frag_ratio = [index_calculation.fragm_index(year, bbox) for year in years]
 # Sources: https://matplotlib.org/stable/users/explain/colors/colormaps.html
 # 
 def tif_to_png_singleband(tif_path, png_path, cmap_name, vmin, vmax):
-    """Convert a single band raster (NDVI/NDMI) into a colored PNG + lat/lon bounds."""
+    """
+    Convert a single band raster (NDVI/NDMI) into a colored PNG + lat/lon bounds.
+    :param tif_path: file path to index raster, png_path: path to save png output, cmap_name: name of colorbar from matplotlib, 
+    vmin: minimum value, vmax: maximum value
+    """
     with rasterio.open(tif_path) as src:
         arr = src.read(1)
         norm = matplotlib.colors.Normalize(vmin=vmin, vmax=vmax)
@@ -85,7 +89,10 @@ def tif_to_png_singleband(tif_path, png_path, cmap_name, vmin, vmax):
 # Source: https://geopandas.org/en/latest/docs/reference/api/geopandas.GeoDataFrame.__geo_interface__.html
 # Load the mangrove shp files as gdf and convert to GeoJSON
 def get_extent_geojson(year):
-    """Load the mangrove extent shapefile for a given year, as GeoJSON for dl.GeoJSON."""
+    """
+    Load the mangrove extent shapefile for a given year, as GeoJSON for dl.GeoJSON.
+    :param year: year of interest
+    """
     gdf = gpd.read_file(f"data/vector/Mangrove Dynamics in China/mangrove{year}.shp")
     return gdf.__geo_interface__
 
@@ -93,7 +100,10 @@ def get_extent_geojson(year):
 # Sources: https://dash.plotly.com/dash-core-components/graph
 # https://plotly.com/python/reference/layout/
 def create_fragmentation_figure(years, frag_ratio):
-    """Build an interactive line chart of the mangrove fragmentation index over time."""
+    """
+    Build an interactive line chart of the mangrove fragmentation index over time.
+    :param years: years of interest (list), frag_ratio: the previously calculated ratio of edge-to-area of mangrove forests
+    """
     fig = px.line(
         x=years, y=frag_ratio, markers=True,
         labels={"x": "Years (x)", "y": "Edge-to-area ratio of mangrove forests (y)"},
@@ -216,6 +226,9 @@ app.layout = html.Div([
     Input('layer-toggle', 'value'))
 
 def update_map(selected_year, layer_choice):
+    """
+    Updates map by defining the layers. 
+    """
     # layers that always shown, regadless of the year or the toggle choice
     layers = [
         dl.TileLayer(),
