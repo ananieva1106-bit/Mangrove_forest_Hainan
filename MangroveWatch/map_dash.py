@@ -57,13 +57,20 @@ areas_of_interest = {
     },
 }
 
-years = [1996, 2003, 2010, 2016, 2020]
+years = [1996, 2002, 2010, 2015, 2020]
 
 from MangroveWatch import index_calculation
 
 bbox = (108.506470, 18.151072, 111.088257, 20.190035)
 frag_ratio = [index_calculation.fragm_index(year, bbox) for year in years]
 
+# Colour settings for the index layers, in one place so that the map overlay
+# and the legend always use exactly the same colormap and value range
+# Source: Claude
+LAYER_STYLE = {
+    "ndvi": {"label": "NDVI", "cmap": "RdYlGn", "vmin": -1, "vmax": 1},
+    "ndmi": {"label": "NDMI", "cmap": "BrBG", "vmin": -0.5, "vmax": 0.5},
+}
 
 # Sources: https://matplotlib.org/stable/users/explain/colors/colormaps.html
 # 
@@ -115,6 +122,34 @@ def create_fragmentation_figure(years, frag_ratio):
     )
     return fig
 
+### NEW
+# Source: https://dash.plotly.com/dash-html-components/div
+# Build a simple colorbar legend (a CSS gradient made from the same colormap as the map)
+def make_legend(layer_choice):
+    """Build a simple colorbar legend for the selected layer."""
+    if layer_choice not in LAYER_STYLE:
+        # Mangrove extent: a single green box
+        return html.Div([
+            html.Span(style={"display": "inline-block", "width": "15px", "height": "15px",
+                             "backgroundColor": "green", "opacity": 0.5, "marginRight": "6px"}),
+            html.Span("Mangrove extent"),
+        ], style={"padding": "10px"})
+ 
+    s = LAYER_STYLE[layer_choice]
+    cmap = mpl.colormaps[s["cmap"]]
+    colors = [matplotlib.colors.to_hex(cmap(i / 10)) for i in range(11)]
+    mid = (s["vmin"] + s["vmax"]) / 2
+ 
+    return html.Div([
+        html.B(s["label"]),
+        html.Div(style={"height": "15px", "width": "100%",
+                        "background": f"linear-gradient(to right, {', '.join(colors)})"}),
+        html.Div([
+            html.Span(f"≤ {s['vmin']}"),
+            html.Span(f"{mid:.1f}"),
+            html.Span(f"≥ {s['vmax']}"),
+        ], style={"display": "flex", "justifyContent": "space-between", "fontSize": "12px"}),
+    ], style={"padding": "10px", "maxWidth": "300px"})
 
 # Source: https://developer.mozilla.org/en-US/docs/Web/CSS/Guides/Flexible_box_layout/Basic_concepts
 # Drawing the main map, centered on Hainan
@@ -177,6 +212,9 @@ app.layout = html.Div([
                 id='layer-toggle'
             ),
 
+            # Legend: filled by the update_legend callback below
+            html.Div(id="legend"),
+            
             # Adding the slider with the years
             # Sources: https://dash.plotly.com/basic-callbacks#dash-app-layout-with-figure-and-slider
             # https://dash.plotly.com/dash-core-components/slider
@@ -240,17 +278,27 @@ def update_map(selected_year, layer_choice):
 
     # Build the correct file path for the selected year, convert it to a PNG,
     # and add it as the one data layer matching the current toggle choice
-    if layer_choice == "ndvi":
-        raster_path = f"output/NDVI_{selected_year}.tif"
-        png_path = os.path.join(ASSETS_DIR, f"ndvi_{selected_year}.png")
-        bounds = tif_to_png_singleband(raster_path, png_path, "RdYlGn", vmin=-1, vmax=1)
+    # (colormap and value range come from LAYER_STYLE, shared with the legend)
+    if layer_choice in LAYER_STYLE:
+        s = LAYER_STYLE[layer_choice]
+        raster_path = f"output/{s['label']}_{selected_year}.tif"
+        png_path = os.path.join(ASSETS_DIR, f"{layer_choice}_{selected_year}.png")
+        bounds = tif_to_png_singleband(raster_path, png_path, s["cmap"], s["vmin"], s["vmax"])
         layers.append(dl.ImageOverlay(url=f"/assets/{os.path.basename(png_path)}", bounds=bounds, opacity=0.8))
 
-    elif layer_choice == "ndmi":
-        raster_path = f"output/NDMI_{selected_year}.tif"
-        png_path = os.path.join(ASSETS_DIR, f"ndmi_{selected_year}.png")
-        bounds = tif_to_png_singleband(raster_path, png_path, "BrBG", vmin=-1, vmax=1)
-        layers.append(dl.ImageOverlay(url=f"/assets/{os.path.basename(png_path)}", bounds=bounds, opacity=0.8))
+    # # Build the correct file path for the selected year, convert it to a PNG,
+    # # and add it as the one data layer matching the current toggle choice
+    # if layer_choice == "ndvi":
+    #     raster_path = f"output/NDVI_{selected_year}.tif"
+    #     png_path = os.path.join(ASSETS_DIR, f"ndvi_{selected_year}.png")
+    #     bounds = tif_to_png_singleband(raster_path, png_path, "RdYlGn", vmin=-1, vmax=1)
+    #     layers.append(dl.ImageOverlay(url=f"/assets/{os.path.basename(png_path)}", bounds=bounds, opacity=0.8))
+
+    # elif layer_choice == "ndmi":
+    #     raster_path = f"output/NDMI_{selected_year}.tif"
+    #     png_path = os.path.join(ASSETS_DIR, f"ndmi_{selected_year}.png")
+    #     bounds = tif_to_png_singleband(raster_path, png_path, "BrBG", vmin=-1, vmax=1)
+    #     layers.append(dl.ImageOverlay(url=f"/assets/{os.path.basename(png_path)}", bounds=bounds, opacity=0.8))
 
     # Source: https://leafletjs.com/examples/geojson/
     # Mangrove extent is vector data (shapefile), not a raster (there's no need to convert it)
@@ -262,6 +310,12 @@ def update_map(selected_year, layer_choice):
     # return all layers to this year/toggle
     return layers
 
+# Update the legend whenever the layer toggle changes
+@callback(
+    Output("legend", "children"),
+    Input("layer-toggle", "value"))
+def update_legend(layer_choice):
+    return make_legend(layer_choice)
 
 # One callback per zoom button (each just flies the map to its own area)
 # Soruce: https://dash.plotly.com/advanced-callbacks
@@ -284,8 +338,8 @@ def zoom_to_area(n1, n2, n3, n_reset):
 
 # Start the dash server
 if __name__ == '__main__':
-    app.run(debug=True, use_reloader=False, dev_tools_hot_reload=False)
+    app.run(debug=False, use_reloader=False, dev_tools_hot_reload=False)
 
 # Run in main
 def run_dashboard():
-  app.run(debug=True, use_reloader=False, dev_tools_hot_reload=False)
+  app.run(debug=False, use_reloader=False, dev_tools_hot_reload=False)
