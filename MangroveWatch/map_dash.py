@@ -8,7 +8,8 @@
 # Note: Most things are hard coded - with more time we would have soft coded this script also. 
 
 
-# Main sources: https://dash.plotly.com/basic-callbacks#dash-app-layout-with-figure-and-slider
+# Main sources: https://dash.plotly.com/
+# https://dash.plotly.com/basic-callbacks#dash-app-layout-with-figure-and-slider
 import os
 import numpy as np
 import rasterio
@@ -16,16 +17,23 @@ import geopandas as gpd
 import matplotlib.colors
 import matplotlib as mpl
 import matplotlib.cm as cm
+import matplotlib.pyplot as plt
 import plotly.express as px 
 from rasterio.warp import transform_bounds
 from PIL import Image
 from dash import Dash, dcc, html, Input, Output, callback, ctx
 import dash_leaflet as dl
 
-app = Dash()
+# Create an absolute path to the project root and the assets folder
+# The assets folder is Dash's built-in way of serving PNGs and other files
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+ASSETS_DIR = os.path.join(BASE_DIR, "data", "assets")
 
-# Create a subfolder called assets inside data because dash needs it to store the png images
-os.makedirs("data/assets", exist_ok=True)
+# Tell dash where to find the png images (NDVI/NDMI data)
+app = Dash(assets_folder=ASSETS_DIR)
+
+# Create the assets folder
+os.makedirs(ASSETS_DIR, exist_ok=True)
 
 # Defining the areas of interest
 areas_of_interest = {
@@ -57,13 +65,14 @@ bbox = (108.506470, 18.151072, 111.088257, 20.190035)
 frag_ratio = [index_calculation.fragm_index(year, bbox) for year in years]
 
 
-# Source: https://matplotlib.org/stable/users/explain/colors/colormaps.html
+# Sources: https://matplotlib.org/stable/users/explain/colors/colormaps.html
+# 
 def tif_to_png_singleband(tif_path, png_path, cmap_name, vmin, vmax):
     """Convert a single band raster (NDVI/NDMI) into a colored PNG + lat/lon bounds."""
     with rasterio.open(tif_path) as src:
         arr = src.read(1)
         norm = matplotlib.colors.Normalize(vmin=vmin, vmax=vmax)
-        cmap = mpl.colormaps(cmap_name)
+        cmap = mpl.colormaps[cmap_name]
         rgba = (cmap(norm(arr)) * 255).astype("uint8")
         Image.fromarray(rgba, mode="RGBA").save(png_path)
 
@@ -81,13 +90,18 @@ def get_extent_geojson(year):
     return gdf.__geo_interface__
 
 
-# Source: https://dash.plotly.com/dash-core-components/graph
+# Sources: https://dash.plotly.com/dash-core-components/graph
+# https://plotly.com/python/reference/layout/
 def create_fragmentation_figure(years, frag_ratio):
     """Build an interactive line chart of the mangrove fragmentation index over time."""
     fig = px.line(
         x=years, y=frag_ratio, markers=True,
-        labels={"x": "Years", "y": "Edge-to-area ratio of mangrove forests"},
+        labels={"x": "Years (x)", "y": "Edge-to-area ratio of mangrove forests (y)"},
         title="Degree of fragmentation of mangrove forests in Hainan",
+    )
+    fig.update_layout(
+        title_x=0.5,
+        title_font_color='black',
     )
     return fig
 
@@ -109,12 +123,26 @@ app.layout = html.Div([
                 zoom=8,
                 children=[
                     dl.TileLayer(),
+                    # Scale bar
+                    # Source: https://www.dash-leaflet.com/components/controls/scale_control
+                    dl.ScaleControl(position="bottomleft", imperial=False),
                     # Rectangles marking the three areas of interest
                     dl.Rectangle(bounds=areas_of_interest["area1"]["bounds"], id="rect-area1"),
                     dl.Rectangle(bounds=areas_of_interest["area2"]["bounds"], id="rect-area2"),
                     dl.Rectangle(bounds=areas_of_interest["area3"]["bounds"], id="rect-area3"),
                 ],
                 style={'height': '60vh'},
+            ),
+
+            # North arrow in the top right corner of the map
+            # Source: https://dash.plotly.com/dash-html-components/p
+            html.P(
+                "↑N",
+                style={
+                    "position": "absolute", "top": "10px", "right": "10px",
+                    "fontSize": "24px", "fontWeight": "bold", "zIndex": "1000",
+                    "backgroundColor": "white", "padding": "2px 8px", "borderRadius": "4px",
+                }
             ),
 
             # Sources: https://dash.plotly.com/component-argument-order
@@ -147,14 +175,35 @@ app.layout = html.Div([
                 marks={str(year): str(year) for year in years},
                 id='year-slider'
             ),
-        ], style={'flex': '2'}),
+        ], style={'flex': '2', 'position': 'relative'}),
 
         # Right side: the interactive fragmentation graph
         html.Div([
-            dcc.Graph(figure=create_fragmentation_figure(years, frag_ratio)),
-        ], style={'flex': '1', 'padding': '20px'}),
-
+            dcc.Graph(
+                figure=create_fragmentation_figure(years, frag_ratio),
+                style={'width': '100%', 'height': '60vh'}
+            ),
+            html.P(
+                "Degree of fragmentation is expressed through the edge-to-area ratio. "
+                "The ratio is calculated for the given years and mangrove forest extent "
+                "across Hainan Island.",
+                style={'textAlign': 'center', 'fontSize': '12px', 'color': 'gray', 'padding': '10px'}
+    ),
+        ], style={'flex': '1.5', 'padding': '20px', 'minWidth': '400px'}),
     ], style={'display': 'flex'}),
+    
+    # Copyright and attribution text
+    html.Div([
+        html.P(
+            "Mangrove Watch — Elmo van den Beld, Aleksandra Ananieva, Lea Ehrensperger, Roxane Marguerat. "
+            "Created for Geoscripting GRS 33806, Wageningen University, 2026.",
+            style={'margin': '0'}
+        ),
+        html.P(
+            "Data sources are listed in the README.md file.",
+            style={'margin': '0'}
+        ),
+    ], style={'textAlign': 'center', 'fontSize': '11px', 'color': 'gray', 'padding': '10px'}),
 ])
 
 
@@ -170,6 +219,7 @@ def update_map(selected_year, layer_choice):
     # layers that always shown, regadless of the year or the toggle choice
     layers = [
         dl.TileLayer(),
+        dl.ScaleControl(position="bottomleft", imperial=False),
         dl.Rectangle(bounds=areas_of_interest["area1"]["bounds"], id="rect-area1"),
         dl.Rectangle(bounds=areas_of_interest["area2"]["bounds"], id="rect-area2"),
         dl.Rectangle(bounds=areas_of_interest["area3"]["bounds"], id="rect-area3"),
@@ -179,13 +229,13 @@ def update_map(selected_year, layer_choice):
     # and add it as the one data layer matching the current toggle choice
     if layer_choice == "ndvi":
         raster_path = f"output/NDVI_{selected_year}.tif"
-        png_path = os.path.join("data", "assets", f"ndvi_{selected_year}.png")
+        png_path = os.path.join(ASSETS_DIR, f"ndvi_{selected_year}.png")
         bounds = tif_to_png_singleband(raster_path, png_path, "RdYlGn", vmin=-0.2, vmax=0.8)
         layers.append(dl.ImageOverlay(url=f"/assets/{os.path.basename(png_path)}", bounds=bounds, opacity=0.8))
 
     elif layer_choice == "ndmi":
         raster_path = f"output/NDMI_{selected_year}.tif"
-        png_path = os.path.join("data", "assets", f"ndmi_{selected_year}.png")
+        png_path = os.path.join(ASSETS_DIR, f"ndmi_{selected_year}.png")
         bounds = tif_to_png_singleband(raster_path, png_path, "YlGnBu", vmin=-0.5, vmax=0.5)
         layers.append(dl.ImageOverlay(url=f"/assets/{os.path.basename(png_path)}", bounds=bounds, opacity=0.8))
 
@@ -226,4 +276,4 @@ if __name__ == '__main__':
 
 # Run in main
 def run_dashboard():
-    app.run(debug=True)
+  app.run(debug=True, use_reloader=False)
