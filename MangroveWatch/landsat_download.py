@@ -17,8 +17,6 @@ import pystac_client
 import planetary_computer
 import odc.stac
 import rasterio
-import numpy as np
-import xarray as xr
 
 def landsat_download(year, bbox, bands, crs, output_dir):
     """
