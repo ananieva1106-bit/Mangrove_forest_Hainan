@@ -243,13 +243,13 @@ def update_map(selected_year, layer_choice):
     if layer_choice == "ndvi":
         raster_path = f"output/NDVI_{selected_year}.tif"
         png_path = os.path.join(ASSETS_DIR, f"ndvi_{selected_year}.png")
-        bounds = tif_to_png_singleband(raster_path, png_path, "RdYlGn", vmin=-0.2, vmax=0.8)
+        bounds = tif_to_png_singleband(raster_path, png_path, "RdYlGn", vmin=-1, vmax=1)
         layers.append(dl.ImageOverlay(url=f"/assets/{os.path.basename(png_path)}", bounds=bounds, opacity=0.8))
 
     elif layer_choice == "ndmi":
         raster_path = f"output/NDMI_{selected_year}.tif"
         png_path = os.path.join(ASSETS_DIR, f"ndmi_{selected_year}.png")
-        bounds = tif_to_png_singleband(raster_path, png_path, "YlGnBu", vmin=-0.5, vmax=0.5)
+        bounds = tif_to_png_singleband(raster_path, png_path, "BrBG", vmin=-1, vmax=1)
         layers.append(dl.ImageOverlay(url=f"/assets/{os.path.basename(png_path)}", bounds=bounds, opacity=0.8))
 
     # Source: https://leafletjs.com/examples/geojson/
