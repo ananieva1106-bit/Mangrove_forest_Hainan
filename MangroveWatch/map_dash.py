@@ -35,29 +35,30 @@ app = Dash(assets_folder=ASSETS_DIR)
 # Create the assets folder
 os.makedirs(ASSETS_DIR, exist_ok=True)
 
+# Defining the years of interest
+years = [1996, 2002, 2010, 2015, 2020]
+
 # Defining the areas of interest
 areas_of_interest = {
     "area1": {
         "label": "Area 1",
         "bounds": [[19.862633, 110.497055], [20.066574, 110.663910]],
         "center": [19.971735, 110.596447],
-        "zoom": 10.5,
+        "zoom": 11.5,
     },
     "area2": {
         "label": "Area 2",
         "bounds": [[19.671039, 109.154320], [19.799010, 109.362030]],
         "center": [19.745055, 109.262724],
-        "zoom": 10.5,
+        "zoom": 11.5,
     },
     "area3": {
         "label": "Area 3",
         "bounds": [[19.515463, 110.736351], [19.643881, 110.905266]],
         "center": [19.580170, 110.820637],
-        "zoom": 10.5,
+        "zoom": 11.5,
     },
 }
-
-years = [1996, 2002, 2010, 2015, 2020]
 
 from MangroveWatch import index_calculation
 
@@ -122,11 +123,14 @@ def create_fragmentation_figure(years, frag_ratio):
     )
     return fig
 
-### NEW
+
 # Source: https://dash.plotly.com/dash-html-components/div
 # Build a simple colorbar legend (a CSS gradient made from the same colormap as the map)
 def make_legend(layer_choice):
-    """Build a simple colorbar legend for the selected layer."""
+    """
+    Build a simple colorbar legend for the selected layer.
+    :param layer_choice = the layer clicked on by user
+    """
     if layer_choice not in LAYER_STYLE:
         # Mangrove extent: a single green box
         return html.Div([
@@ -172,9 +176,9 @@ app.layout = html.Div([
                     # Source: https://www.dash-leaflet.com/components/controls/scale_control
                     dl.ScaleControl(position="bottomleft", imperial=False),
                     # Rectangles marking the three areas of interest
-                    dl.Rectangle(bounds=areas_of_interest["area1"]["bounds"], id="rect-area1", fillOpacity=0),
-                    dl.Rectangle(bounds=areas_of_interest["area2"]["bounds"], id="rect-area2", fillOpacity=0),
-                    dl.Rectangle(bounds=areas_of_interest["area3"]["bounds"], id="rect-area3", fillOpacity=0),
+                    dl.Rectangle(bounds=areas_of_interest["area1"]["bounds"], id="rect-area1", color="blue", fillOpacity=0),
+                    dl.Rectangle(bounds=areas_of_interest["area2"]["bounds"], id="rect-area2", color="blue", fillOpacity=0),
+                    dl.Rectangle(bounds=areas_of_interest["area3"]["bounds"], id="rect-area3", color="blue", fillOpacity=0),
                 ],
                 style={'height': '60vh'},
             ),
@@ -265,7 +269,8 @@ app.layout = html.Div([
 
 def update_map(selected_year, layer_choice):
     """
-    Updates map by defining the layers. 
+    Loads the map depending on the button pressed : change the year or the layer
+    :param : selected_year and layer_choice = year and layer clicked on by user
     """
     # layers that always shown, regadless of the year or the toggle choice
     layers = [
@@ -285,20 +290,6 @@ def update_map(selected_year, layer_choice):
         png_path = os.path.join(ASSETS_DIR, f"{layer_choice}_{selected_year}.png")
         bounds = tif_to_png_singleband(raster_path, png_path, s["cmap"], s["vmin"], s["vmax"])
         layers.append(dl.ImageOverlay(url=f"/assets/{os.path.basename(png_path)}", bounds=bounds, opacity=0.8))
-
-    # # Build the correct file path for the selected year, convert it to a PNG,
-    # # and add it as the one data layer matching the current toggle choice
-    # if layer_choice == "ndvi":
-    #     raster_path = f"output/NDVI_{selected_year}.tif"
-    #     png_path = os.path.join(ASSETS_DIR, f"ndvi_{selected_year}.png")
-    #     bounds = tif_to_png_singleband(raster_path, png_path, "RdYlGn", vmin=-1, vmax=1)
-    #     layers.append(dl.ImageOverlay(url=f"/assets/{os.path.basename(png_path)}", bounds=bounds, opacity=0.8))
-
-    # elif layer_choice == "ndmi":
-    #     raster_path = f"output/NDMI_{selected_year}.tif"
-    #     png_path = os.path.join(ASSETS_DIR, f"ndmi_{selected_year}.png")
-    #     bounds = tif_to_png_singleband(raster_path, png_path, "BrBG", vmin=-1, vmax=1)
-    #     layers.append(dl.ImageOverlay(url=f"/assets/{os.path.basename(png_path)}", bounds=bounds, opacity=0.8))
 
     # Source: https://leafletjs.com/examples/geojson/
     # Mangrove extent is vector data (shapefile), not a raster (there's no need to convert it)
@@ -328,6 +319,9 @@ def update_legend(layer_choice):
     prevent_initial_call=True,
 )
 def zoom_to_area(n1, n2, n3, n_reset):
+    """
+    Zoom on a defined area depending on the user choice
+    """
     triggered = ctx.triggered_id
     mapping = {"btn-area1": "area1", "btn-area2": "area2", "btn-area3": "area3"}
     if triggered in mapping:
