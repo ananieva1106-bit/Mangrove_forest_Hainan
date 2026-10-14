@@ -11,13 +11,10 @@
 # Main sources: https://dash.plotly.com/
 # https://dash.plotly.com/basic-callbacks#dash-app-layout-with-figure-and-slider
 import os
-import numpy as np
 import rasterio
 import geopandas as gpd
 import matplotlib.colors
 import matplotlib as mpl
-import matplotlib.cm as cm
-import matplotlib.pyplot as plt
 import plotly.express as px 
 from rasterio.warp import transform_bounds
 from PIL import Image
