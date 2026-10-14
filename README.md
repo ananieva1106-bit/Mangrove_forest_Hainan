@@ -61,11 +61,11 @@ Before running the main script :
 - Comment the section DOWNLOAD DATA in main.py
 - Skip the instruction about downlaoding the mangrove data using pixi and run main.py normally
 
-## Optional: Instruction to change the years chosen for the analysis
-If the user wishes to analyze different years than the default ones, this can be done by changing the `years` variable to include the years the user wishes to utilize (ranging from 1996 to 2020). Updating this variable has to be done in the same way in these two places:
+### OPTIONAL: Instruction to change the years chosen for the analysis
+If the user wishes to analyze different years than the default ones, this can be done by changing the `years` variable to include the years the user wishes to utilize (ranging from 1996 to 2020). Updating this variable has to be done **in the same way** in these two places:
 
-1. In main.py
-2. In map_dash.py
+1. In `main.py`
+2. In `map_dash.py`
 
 ## Data sources
 - Mangrove extent vector data :
@@ -75,9 +75,7 @@ https://www.scidb.cn/en/detail?dataSetId=195bcf0052384d599917c2f656e2dc4a#detail
 https://earthdatascience.org/courses/use-data-open-source-python/multispectral-remote-sensing/landsat-in-Python/
 
 - Bbox for Hainan from bboxfinder.com: 
-
-    EPSG4326 WGS84: 108.506470, 18.151072, 111.088257, 20.190035,  (Lng/Lat) # (Lng/Lat) is the preferred method for python functionality
-https://bboxfinder.com/#0.000000,0.000000,0.000000,0.000000
+https://bboxfinder.com
 
 
 
