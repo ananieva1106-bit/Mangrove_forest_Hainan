@@ -39,20 +39,20 @@ os.makedirs(ASSETS_DIR, exist_ok=True)
 areas_of_interest = {
     "area1": {
         "label": "Area 1",
-        "bounds": [[19.848175, 110.291598], [20.116546, 110.677381]],
-        "center": [19.954933, 110.477444],
+        "bounds": [[19.862633, 110.497055], [20.066574, 110.663910]],
+        "center": [19.971735, 110.596447],
         "zoom": 10.5,
     },
     "area2": {
         "label": "Area 2",
-        "bounds": [[19.668592, 109.114837], [19.973400, 109.588499]],
-        "center": [19.821290, 109.351420],
+        "bounds": [[19.671039, 109.154320], [19.799010, 109.362030]],
+        "center": [19.745055, 109.262724],
         "zoom": 10.5,
     },
     "area3": {
         "label": "Area 3",
-        "bounds": [[19.393506, 110.663167], [19.653592, 110.965212]],
-        "center": [19.489583, 110.767949],
+        "bounds": [[19.515463, 110.736351], [19.643881, 110.905266]],
+        "center": [19.580170, 110.820637],
         "zoom": 10.5,
     },
 }
@@ -172,9 +172,9 @@ app.layout = html.Div([
                     # Source: https://www.dash-leaflet.com/components/controls/scale_control
                     dl.ScaleControl(position="bottomleft", imperial=False),
                     # Rectangles marking the three areas of interest
-                    dl.Rectangle(bounds=areas_of_interest["area1"]["bounds"], id="rect-area1"),
-                    dl.Rectangle(bounds=areas_of_interest["area2"]["bounds"], id="rect-area2"),
-                    dl.Rectangle(bounds=areas_of_interest["area3"]["bounds"], id="rect-area3"),
+                    dl.Rectangle(bounds=areas_of_interest["area1"]["bounds"], id="rect-area1", fillOpacity=0),
+                    dl.Rectangle(bounds=areas_of_interest["area2"]["bounds"], id="rect-area2", fillOpacity=0),
+                    dl.Rectangle(bounds=areas_of_interest["area3"]["bounds"], id="rect-area3", fillOpacity=0),
                 ],
                 style={'height': '60vh'},
             ),
