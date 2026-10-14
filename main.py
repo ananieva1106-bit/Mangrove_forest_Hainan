@@ -5,11 +5,7 @@
 # Sources are reference throughout the script
 
 # Importing packages
-from MangroveWatch import map_dash_not_hardcoded
 import os
-import rasterio
-import pandas as pd
-import matplotlib.pyplot as plt
 
 # Importing the functions
 from MangroveWatch import landsat_download
