@@ -46,7 +46,7 @@ output_dir = "data/landsat_data"
 n_scenes = 3
 
 for year in years:
-    landsat_download.landsat_download(year, bbox, bands, crs, output_dir, n_scenes)
+    landsat_download.landsat_download(year, bbox, bands, crs, output_dir)
  
 
 ## PREPARATION OF DATA ### ================================================================================================
