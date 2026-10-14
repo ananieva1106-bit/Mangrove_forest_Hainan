@@ -14,7 +14,7 @@ import rasterio
 import numpy as np
 import xarray as xr
 
-def landsat_download(year, bbox, crs, output_dir):
+def landsat_download(year, bbox, bands, crs, output_dir):
     """
         Extracts all Landsat Collection 2 Level 2 scenes as a list for a set year, region, and bands 
         between 1st of December (from prev year) to end of March.
